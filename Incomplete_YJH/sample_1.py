@@ -24,24 +24,27 @@ class State:
         # 차 : 1, 졸: 2, 마: 3, 포: 4, 사: 5, 상: 6, 왕: 7
 
         if pieces == None or enemy_pieces == None:
-            if self.idx[0] == 0:
+            if self.idx[1] == 0:
               a, b, c, d = 3, 6, 3, 6 # 마상마상
-            elif self.idx[0] == 1:
+            elif self.idx[1] == 1:
               a, b, c, d = 3, 6, 6, 3 # 마상상마
-            elif self.idx[0] == 2:
+            elif self.idx[1] == 2:
               a, b, c, d = 6, 3, 6, 3 # 상마상마
-            elif self.idx[0] == 3:
+            elif self.idx[1] == 3:
               a, b, c, d = 6, 3, 3, 6 # 상마마상
             
-            if self.idx[1] == 0:
+            if self.idx[2] == 0:
               e, f, g, h = 3, 6, 3, 6 # 마상마상
-            elif self.idx[1] == 1:
+            elif self.idx[2] == 1:
               e, f, g, h = 3, 6, 6, 3 # 마상상마
-            elif self.idx[1] == 2:
+            elif self.idx[2] == 2:
               e, f, g, h = 6, 3, 6, 3 # 상마상마
-            elif self.idx[1] == 3:
+            elif self.idx[2] == 3:
               e, f, g, h = 6, 3, 3, 6 # 상마마상
                           
+
+
+
             self.pieces =  [0,0,0,0,0,0,0,0,0,
                             0,0,0,0,0,0,0,0,0,
                             0,0,0,0,0,0,0,0,0,

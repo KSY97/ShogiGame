@@ -12,7 +12,7 @@ class State:
 
         # 말의 배치
         self.pieces = pieces if pieces != None else [0] * (9*10) # 초기 말 배치
-        self.enemy_pieces = enemy_pieces if enemy_pieces != None else [0] * (9*10))
+        self.enemy_pieces = enemy_pieces if enemy_pieces != None else [0] * (9*10)
         self.depth = depth
         
 
@@ -196,6 +196,19 @@ class State:
     def is_first_player(self):
         return self.depth % 2 == 0
 
+
+    # def legal_action(self):
+    #     actions = []
+    #     for p in range(90):
+    #         if self.pieces[p] != 0:
+    #             actions.extend(self.legal_action_pos(p))
+    
+    # def legal_actions_pos(self,position_src):
+    #     actions = []
+    # `   
+    #     piece_type = self.pieces[position_src]
+    #     if piece_type > 4: piece_type -4`
+    
     # 문자열 표시
     def __str__(self):
         pieces0 = self.pieces if self.is_first_player() else self.enemy_pieces
