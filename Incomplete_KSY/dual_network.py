@@ -15,7 +15,7 @@ import pickle
 DN_FILTERS = 128  # 컨볼루션 레이어 커널 수(오리지널 256）
 DN_RESIDUAL_NUM = 16  # 레지듀얼 블록 수(오리지널 19)
 DN_INPUT_SHAPE = (15, 10, 9)  # 입력 셰이프
-DN_OUTPUT_SIZE = 132  # 행동 수(말의 이동 도착 위치(90) * 말의 이동 시작 위치(8))
+DN_OUTPUT_SIZE = 5220  # 행동 수(말의 이동 도착 위치(90) * 말의 이동 시작 위치(58))
 PATH = './model/best.h5'
 
 class BasicBlock(nn.Module):
