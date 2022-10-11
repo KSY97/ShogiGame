@@ -275,7 +275,7 @@ class State:
             if self.dxy[direction][1] != 0 and self.dxy[direction][0] == 0: 
               # 하
               for path in range(1, self.dxy[direction][1]):
-                if self.enemy_pieces[89 - bef_x + (bef_y+ path) * 9] != 0:
+                if self.enemy_pieces[89 - (bef_x + (bef_y+ path) * 9)] != 0:
                   actions.append(self.position_to_action(p, direction))
                   break
                 elif self.pieces[bef_x + (bef_y+ path) * 9] != 0:
@@ -284,7 +284,7 @@ class State:
                   actions.append(self.position_to_action(p, direction))
               # 상
               for n_path in range(-1, self.dxy[direction][0], -1):
-                if self.enemy_pieces[89 - bef_x + (bef_y+ path) * 9] != 0:
+                if self.enemy_pieces[89 - (bef_x + (bef_y+ path) * 9)] != 0:
                   actions.append(self.position_to_action(p, direction))
                   break
                 elif self.pieces[bef_x + (bef_y+ path) * 9] != 0:
@@ -393,7 +393,7 @@ class State:
                       break
                 if is_po:
                   for path in range(is_po, self.dxy[direction][0]): # 기물을 뛰어 넘은 이후부터 경로를 다시 탐색 
-                    if self.enemy_pieces[89 - (bef_x + path) + bef_y * 9] != 0: # 상대편 보드에 기물이 있다면 행동추가 하고 break 
+                    if self.enemy_pieces[89 - ((bef_x + path) + bef_y * 9)] != 0: # 상대편 보드에 기물이 있다면 행동추가 하고 break 
                       actions.append(self.position_to_action(p, direction))
                       break
                     elif self.pieces[(bef_x + path) + bef_y * 9] != 0: # 내 보드에 기물이 있다면 그냥 break
@@ -409,7 +409,7 @@ class State:
                       break
                 if is_po:
                   for path in range(is_po, self.dxy[direction][0], -1): # 기물을 뛰어 넘은 이후부터 경로를 다시 탐색 
-                    if self.enemy_pieces[89 - (bef_x + path) + bef_y * 9] != 0: # 상대편 보드에 기물이 있다면 행동추가 하고 break 
+                    if self.enemy_pieces[89 - ((bef_x + path) + bef_y * 9)] != 0: # 상대편 보드에 기물이 있다면 행동추가 하고 break 
                       actions.append(self.position_to_action(p, direction))
                       break
                     elif self.pieces[(bef_x + path) + bef_y * 9] != 0: # 내 보드에 기물이 있다면 그냥 break
