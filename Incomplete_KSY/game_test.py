@@ -337,8 +337,13 @@ class State:
             if self.pieces[(bef_x + 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x + 1) + bef_y * 9)] == 0:
               actions.append(self.position_to_action(p, direction)) 
             # 하         
+<<<<<<< HEAD
             if self.pieces[bef_x + (bef_y + 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y + 1) * 9)] == 0:
               actions.append(self.position_to_action(p, direction))
+=======
+            # if self.pieces[bef_x + (bef_y + 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y + 1) * 9)] == 0:
+            #   actions.append(self.position_to_action(p, direction))
+>>>>>>> 6e0bd827f74e9c3cc05cedbe74137679b1a43d1f
             # 좌
             if self.pieces[(bef_x - 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x - 1) + bef_y * 9)] == 0:
               actions.append(self.position_to_action(p, direction))
