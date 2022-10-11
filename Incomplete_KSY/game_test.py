@@ -232,18 +232,24 @@ class State:
 
     # 각 기물들의 모든 이동가능한 방향 함수
     def legal_actions_pos(self, position_src):
+      goong = [66, 67, 68, 75, 76, 77, 84, 85, 86, 3, 4, 5, 12, 13,14, 21, 22, 23]
       # 말이 이동 가능한 방향
       piece_type = self.pieces[position_src]
       if piece_type == 1: # 차
-        # if position_src in goong:
-        #   dir [,,,,52, 53]
-        # else:
-        directions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-                      18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+        if position_src in goong:
+          directions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+                        18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
+                        50, 51, 52, 53, 54, 55, 56, 57]
+        else:
+          directions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+                        18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
         return self.illegal_actions(directions, position_src)
       
       elif piece_type == 2: #졸
-        directions = [0, 9, 26]
+        if position_src in goong:
+          directions = [0, 9, 26, 50, 56]
+        else:
+          directions = [0, 9, 26]
         return self.illegal_actions(directions, position_src)
       
       elif piece_type == 3: #마
@@ -251,8 +257,13 @@ class State:
         return self.illegal_actions(directions, position_src)
       
       elif piece_type == 4: #포
-        directions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-                  18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+        if position_src in goong:
+          directions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+                    18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
+                    51, 53, 55, 57]
+        else:
+          directions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+                    18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
         return self.illegal_actions(directions, position_src)
       
       elif piece_type == 5: #사
@@ -271,7 +282,7 @@ class State:
     def illegal_actions(self, directions, position_src):
       actions = []
       result = []
-      list_goong = [66, 67, 68, 75, 76, 77, 84, 85, 86, 3, 4, 5, 12, 13,14, 21, 22, 23]
+      diag = [50, 51, 52, 53, 54, 55, 56, 57]
 
       # 말의 이동 전 위치 좌표 얻기
       bef_x = position_src % 9
@@ -348,21 +359,69 @@ class State:
                     # print('p, dir = ', p, direction)
                     actions.append(self.position_to_action(p, direction))
 
-            
-            for i in list_goong:
-              if self.pieces[i] == 1:
-                if i == 66 or i == 3:
-                  x = position_src % 9 + self.dxy[52][0] # 방향정수의 x축
-                  y = int(position_src / 9) + self.dxy[52][1] # 방향정수의 y축
-                  p = x + y * 9
-                  if self.pieces[p] == 0:
-                    actions.append(self.position_to_action(p, 52))
 
-                  x = position_src % 9 + self.dxy[53][0] # 방향정수의 x축
-                  y = int(position_src / 9) + self.dxy[53][1] # 방향정수의 y축
-                  p = x + y * 9
-                  if self.pieces[p] == 0:
-                    actions.append(self.position_to_action(p, 53))
+            # 궁 안에 있다면
+            if direction in diag:
+              if position_src == 66 or position_src == 3:
+                # if direction == 52 or direction == 53:
+                if self.pieces[(bef_x + 1) + (bef_y + 1) * 9] == 0:
+                  if direction == 52:
+                    actions.append(self.position_to_action(p, direction))
+                  elif direction == 53 and self.pieces[(bef_x + 2) + (bef_y + 2) * 9] == 0:
+                    actions.append(self.position_to_action(p, direction))
+
+              elif position_src == 68 or position_src == 5:
+                if self.pieces[(bef_x - 1) + (bef_y + 1) * 9] == 0:
+                  if direction == 54:
+                    actions.append(self.position_to_action(p, direction))
+                  elif direction == 55 and self.pieces[(bef_x - 2) + (bef_y + 2) * 9] == 0:
+                    actions.append(self.position_to_action(p, direction))
+
+              elif position_src == 84 or position_src == 21:
+                if self.pieces[(bef_x + 1) + (bef_y - 1) * 9] == 0:
+                  if direction == 50:
+                    actions.append(self.position_to_action(p, direction))
+                  elif direction == 51 and self.pieces[(bef_x + 2) + (bef_y - 2) * 9] == 0:
+                    actions.append(self.position_to_action(p, direction))
+
+              elif position_src == 86 or position_src == 23:
+                if self.pieces[(bef_x - 1) + (bef_y - 1) * 9] == 0:
+                  if direction == 56:
+                    actions.append(self.position_to_action(p, direction))
+                  elif direction == 57 and self.pieces[(bef_x - 2) + (bef_y - 2) * 9] == 0:
+                    actions.append(self.position_to_action(p, direction))
+
+              elif position_src == 76 or position_src == 13:
+                if direction == 50:
+                  if self.pieces[(bef_x + 1) + (bef_y - 1) * 9] == 0:
+                    actions.append(self.position_to_action(p, direction))
+                if direction == 52:
+                  if self.pieces[(bef_x + 1) + (bef_y + 1) * 9] == 0:
+                    actions.append(self.position_to_action(p, direction))
+                if direction == 54:
+                  if self.pieces[(bef_x - 1) + (bef_y + 1) * 9] == 0:
+                    actions.append(self.position_to_action(p, direction))
+                if direction == 56:
+                  if self.pieces[(bef_x - 1) + (bef_y - 1) * 9] == 0:
+                    actions.append(self.position_to_action(p, direction))
+                
+
+
+            
+            # for i in list_goong:
+            #   if self.pieces[i] == 1:
+            #     if i == 66 or i == 3:
+            #       x = position_src % 9 + self.dxy[52][0] # 방향정수의 x축
+            #       y = int(position_src / 9) + self.dxy[52][1] # 방향정수의 y축
+            #       p = x + y * 9
+            #       if self.pieces[p] == 0:
+            #         actions.append(self.position_to_action(p, 52))
+
+            #       x = position_src % 9 + self.dxy[53][0] # 방향정수의 x축
+            #       y = int(position_src / 9) + self.dxy[53][1] # 방향정수의 y축
+            #       p = x + y * 9
+            #       if self.pieces[p] == 0:
+            #         actions.append(self.position_to_action(p, 53))
 
             # # 궁성안에 기물이 있을 때 대각선 행동 추가
             # if self.dxy[direction][1] != 0 and self.dxy[direction][0] != 0:
@@ -548,61 +607,61 @@ class State:
           elif self.pieces[position_src] == 6:
             if (bef_x + (bef_y - 1) * 9) <= 89:
               # 상
-              if self.pieces[bef_x + (bef_y - 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y - 1) * 9)] == 0:
+              if self.pieces[bef_x + (bef_y - 1) * 9] == 0 and self.enemy_pieces[89 - (bef_x + (bef_y - 1) * 9)] == 0:
                 if ((bef_x + 1) + (bef_y - 2) * 9) <= 89:
                   # 상우
-                  if self.pieces[(bef_x + 1) + (bef_y - 2) * 9] and self.enemy_pieces[89 - ((bef_x + 1) + (bef_y - 2) * 9)] == 0:
+                  if self.pieces[(bef_x + 1) + (bef_y - 2) * 9] == 0 and self.enemy_pieces[89 - ((bef_x + 1) + (bef_y - 2) * 9)] == 0:
                     if direction == 42:
                       actions.append(self.position_to_action(p, direction))
 
                 if ((bef_x - 1) + (bef_y - 2) * 9) <= 89:
                   # 상좌
-                  if self.pieces[(bef_x - 1) + (bef_y - 2) * 9] and self.enemy_pieces[89 - ((bef_x - 1) + (bef_y - 2) * 9)] == 0:
+                  if self.pieces[(bef_x - 1) + (bef_y - 2) * 9] == 0 and self.enemy_pieces[89 - ((bef_x - 1) + (bef_y - 2) * 9)] == 0:
                     if direction == 49:  
                       actions.append(self.position_to_action(p, direction))
 
             if ((bef_x + 1) + bef_y * 9) <= 89:
               # 우
-              if self.pieces[(bef_x + 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x + 1) + bef_y * 9)] == 0:
+              if self.pieces[(bef_x + 1) + bef_y * 9] == 0 and self.enemy_pieces[89 - ((bef_x + 1) + bef_y * 9)] == 0:
                 if ((bef_x + 2) + (bef_y - 1) * 9) <= 89:
                   # 우상
-                  if self.pieces[(bef_x + 2) + (bef_y - 1) * 9] and self.enemy_pieces[89 - ((bef_x + 2) + (bef_y - 1) * 9)] == 0:
+                  if self.pieces[(bef_x + 2) + (bef_y - 1) * 9] == 0 and self.enemy_pieces[89 - ((bef_x + 2) + (bef_y - 1) * 9)] == 0:
                     if direction == 43:  
                       actions.append(self.position_to_action(p, direction))
 
                 if ((bef_x + 2) + (bef_y + 1) * 9) <= 89:
                   # 우하
-                  if self.pieces[(bef_x + 2) + (bef_y + 1) * 9] and self.enemy_pieces[89 - ((bef_x + 2) + (bef_y + 1) * 9)] == 0:
+                  if self.pieces[(bef_x + 2) + (bef_y + 1) * 9] == 0 and self.enemy_pieces[89 - ((bef_x + 2) + (bef_y + 1) * 9)] == 0:
                     if direction == 44:  
                       actions.append(self.position_to_action(p, direction))
 
             if (bef_x + (bef_y + 1) * 9) <= 89:
               # 하
-              if self.pieces[bef_x + (bef_y + 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y + 1) * 9)] == 0:
+              if self.pieces[bef_x + (bef_y + 1) * 9] == 0 and self.enemy_pieces[89 - (bef_x + (bef_y + 1) * 9)] == 0:
                 if ((bef_x + 1) + (bef_y + 2) * 9) <= 89:
                   # 하우
-                  if self.pieces[(bef_x + 1) + (bef_y + 2) * 9] and self.enemy_pieces[89 - ((bef_x + 1) + (bef_y + 2) * 9)] == 0:
+                  if self.pieces[(bef_x + 1) + (bef_y + 2) * 9] == 0 and self.enemy_pieces[89 - ((bef_x + 1) + (bef_y + 2) * 9)] == 0:
                     if direction == 45:  
                       actions.append(self.position_to_action(p, direction))
 
                 if ((bef_x - 1) + (bef_y + 2) * 9) <= 89:
                   # 하좌
-                  if self.pieces[(bef_x - 1) + (bef_y + 2) * 9] and self.enemy_pieces[89 - ((bef_x - 1) + (bef_y + 2) * 9)] == 0:
+                  if self.pieces[(bef_x - 1) + (bef_y + 2) * 9] == 0 and self.enemy_pieces[89 - ((bef_x - 1) + (bef_y + 2) * 9)] == 0:
                     if direction == 46:  
                       actions.append(self.position_to_action(p, direction))
             
             if ((bef_x - 1) + bef_y * 9) <= 89:
               # 좌
-              if self.pieces[(bef_x - 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x - 1) + bef_y * 9)] == 0:
+              if self.pieces[(bef_x - 1) + bef_y * 9] == 0 and self.enemy_pieces[89 - ((bef_x - 1) + bef_y * 9)] == 0:
                 if ((bef_x - 2) + (bef_y + 1) * 9) <= 89:
                   # 좌하
-                  if self.pieces[(bef_x - 2) + (bef_y + 1) * 9] and self.enemy_pieces[89 - ((bef_x - 2) + (bef_y + 1) * 9)] == 0:
+                  if self.pieces[(bef_x - 2) + (bef_y + 1) * 9] == 0 and self.enemy_pieces[89 - ((bef_x - 2) + (bef_y + 1) * 9)] == 0:
                     if direction == 47:  
                       actions.append(self.position_to_action(p, direction))
 
                 if ((bef_x - 2) + (bef_y - 1) * 9) <= 89:
                   # 좌상
-                  if self.pieces[(bef_x - 2) + (bef_y - 1) * 9] and self.enemy_pieces[89 - ((bef_x - 2) + (bef_y - 1) * 9)] == 0:
+                  if self.pieces[(bef_x - 2) + (bef_y - 1) * 9] == 0 and self.enemy_pieces[89 - ((bef_x - 2) + (bef_y - 1) * 9)] == 0:
                     if direction == 48:  
                       actions.append(self.position_to_action(p, direction))
         
