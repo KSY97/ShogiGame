@@ -200,7 +200,7 @@ class State:
         return self.illegal_actions(directions, position_src)
       
       elif piece_type == 2: #졸
-        directions = [0, 9, 26] 
+        directions = [0, 9, 26, 50, 56]
         return self.illegal_actions(directions, position_src)
       
       elif piece_type == 3: #마
@@ -309,10 +309,11 @@ class State:
                 if (self.dxy[direction][1] == 1 and dxy[direction][0] == -1) or (self.dxy[direction][1] == 1 and dxy[direction][0] == 1) or (dxy[direction][1] == -1 and dxy[direction][0] == 1) or (dxy[direction][1] == -1 and dxy[direction][0] == -1):
                   actions.append(self.position_to_action(p, direction))
 
-
-          # 졸
+          #졸
           elif self.pieces[position_src] == 2:
-            actions.append(self.position_to_action(p, direction))
+            # 졸이 궁성 안에 없을 때 
+            if position_src != 23 or position_src != 21  or  position_src != 66 or position_src != 13:
+              actions.append(self.position_to_action(p, direction))
             # 궁성안에 기물이 있을 때 대각선 행동 추가
             if self.dxy[direction][1] != 0 and self.dxy[direction][0] != 0:
               if position_src == 23:
@@ -330,18 +331,22 @@ class State:
           
           # 마
           elif self.pieces[position_src] == 3:
-            # 상
-            if self.pieces[bef_x + (bef_y - 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y - 1) * 9)] == 0:
-              actions.append(self.position_to_action(p, direction))
-            # 우
-            if self.pieces[(bef_x + 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x + 1) + bef_y * 9)] == 0:
-              actions.append(self.position_to_action(p, direction)) 
-            # 하         
-            # if self.pieces[bef_x + (bef_y + 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y + 1) * 9)] == 0:
-            #   actions.append(self.position_to_action(p, direction))
-            # 좌
-            if self.pieces[(bef_x - 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x - 1) + bef_y * 9)] == 0:
-              actions.append(self.position_to_action(p, direction))
+            if (bef_x + (bef_y - 1) * 9) <= 89:
+              # 상
+              if self.pieces[bef_x + (bef_y - 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y - 1) * 9)] == 0:
+                actions.append(self.position_to_action(p, direction))
+            if ((bef_x + 1) + bef_y * 9) <= 89:
+              # 우
+              if self.pieces[(bef_x + 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x + 1) + bef_y * 9)] == 0:
+                actions.append(self.position_to_action(p, direction)) 
+            if (bef_x + (bef_y + 1) * 9) <= 89:
+              # 하
+              if self.pieces[bef_x + (bef_y + 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y + 1) * 9)] == 0:
+                actions.append(self.position_to_action(p, direction))
+            if ((bef_x - 1) + bef_y * 9) <= 89:
+              # 좌
+              if self.pieces[(bef_x - 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x - 1) + bef_y * 9)] == 0:
+                actions.append(self.position_to_action(p, direction))
 
           # 포
           elif self.pieces[position_src] == 4:
@@ -464,38 +469,61 @@ class State:
                 
           # 상 
           elif self.pieces[position_src] == 6:
-            # 상우
-            if self.pieces[bef_x + (bef_y - 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y - 1) * 9)] == 0:
-              if self.pieces[(bef_x + 1) + (bef_y - 2) * 9] and self.enemy_pieces[89 - ((bef_x + 1) + (bef_y - 2) * 9)] == 0:
-                actions.append(self.position_to_action(p, direction))
-            # 우상
-            if self.pieces[(bef_x + 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x + 1) + bef_y * 9)] == 0:
-              if self.pieces[(bef_x + 2) + (bef_y - 1) * 9] and self.enemy_pieces[89 - ((bef_x + 2) + (bef_y - 1) * 9)] == 0:
-                actions.append(self.position_to_action(p, direction)) 
-            # 우하
-            if self.pieces[(bef_x + 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x + 1) + bef_y * 9)] == 0:
-              if self.pieces[(bef_x + 2) + (bef_y + 1) * 9] and self.enemy_pieces[89 - ((bef_x + 2) + (bef_y + 1) * 9)] == 0:
-                actions.append(self.position_to_action(p, direction)) 
-            # 하우         
-            if self.pieces[bef_x + (bef_y + 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y + 1) * 9)] == 0:
-              if self.pieces[(bef_x + 1) + (bef_y + 2) * 9] and self.enemy_pieces[89 - ((bef_x + 1) + (bef_y + 2) * 9)] == 0:
-                actions.append(self.position_to_action(p, direction))
-            # 하좌
-            if self.pieces[bef_x + (bef_y + 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y + 1) * 9)] == 0:
-              if self.pieces[(bef_x - 1) + (bef_y + 2) * 9] and self.enemy_pieces[89 - ((bef_x - 1) + (bef_y + 2) * 9)] == 0:
-                actions.append(self.position_to_action(p, direction))
-            # 좌하
-            if self.pieces[(bef_x - 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x - 1) + bef_y * 9)] == 0:
-              if self.pieces[(bef_x - 2) + (bef_y + 1) * 9] and self.enemy_pieces[89 - ((bef_x - 2) + (bef_y + 1) * 9)] == 0:
-                actions.append(self.position_to_action(p, direction))
-            # 좌상
-            if self.pieces[(bef_x - 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x - 1) + bef_y * 9)] == 0:
-              if self.pieces[(bef_x - 2) + (bef_y - 1) * 9] and self.enemy_pieces[89 - ((bef_x - 2) + (bef_y - 1) * 9)] == 0:
-                actions.append(self.position_to_action(p, direction))
-            # 상좌
-            if self.pieces[bef_x + (bef_y - 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y - 1) * 9)] == 0:
-              if self.pieces[(bef_x - 1) + (bef_y - 2) * 9] and self.enemy_pieces[89 - ((bef_x - 1) + (bef_y - 2) * 9)] == 0:
-                actions.append(self.position_to_action(p, direction))
+            if (bef_x + (bef_y - 1) * 9) <= 89:
+              # 상우
+              if self.pieces[bef_x + (bef_y - 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y - 1) * 9)] == 0:
+                if ((bef_x + 1) + (bef_y - 2) * 9) <= 89:
+                  if self.pieces[(bef_x + 1) + (bef_y - 2) * 9] and self.enemy_pieces[89 - ((bef_x + 1) + (bef_y - 2) * 9)] == 0:
+                    actions.append(self.position_to_action(p, direction))
+
+            if ((bef_x + 1) + bef_y * 9) <= 89:
+              # 우상
+              if self.pieces[(bef_x + 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x + 1) + bef_y * 9)] == 0:
+                if ((bef_x + 2) + (bef_y - 1) * 9) <= 89:
+                  if self.pieces[(bef_x + 2) + (bef_y - 1) * 9] and self.enemy_pieces[89 - ((bef_x + 2) + (bef_y - 1) * 9)] == 0:
+                    actions.append(self.position_to_action(p, direction))
+
+            if ((bef_x + 1) + bef_y * 9) <= 89:
+              # 우하
+              if self.pieces[(bef_x + 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x + 1) + bef_y * 9)] == 0:
+                if ((bef_x + 2) + (bef_y + 1) * 9) <= 89:
+                  if self.pieces[(bef_x + 2) + (bef_y + 1) * 9] and self.enemy_pieces[89 - ((bef_x + 2) + (bef_y + 1) * 9)] == 0:
+                    actions.append(self.position_to_action(p, direction))
+
+            if (bef_x + (bef_y + 1) * 9) <= 89:
+              # 하우         
+              if self.pieces[bef_x + (bef_y + 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y + 1) * 9)] == 0:
+                if ((bef_x + 1) + (bef_y + 2) * 9) <= 89:
+                  if self.pieces[(bef_x + 1) + (bef_y + 2) * 9] and self.enemy_pieces[89 - ((bef_x + 1) + (bef_y + 2) * 9)] == 0:
+                    actions.append(self.position_to_action(p, direction))
+
+            if (bef_x + (bef_y + 1) * 9) <= 89:
+              # 하좌
+              if self.pieces[bef_x + (bef_y + 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y + 1) * 9)] == 0:
+                if ((bef_x - 1) + (bef_y + 2) * 9) <= 89:
+                  if self.pieces[(bef_x - 1) + (bef_y + 2) * 9] and self.enemy_pieces[89 - ((bef_x - 1) + (bef_y + 2) * 9)] == 0:
+                    actions.append(self.position_to_action(p, direction))
+            
+            if ((bef_x - 1) + bef_y * 9) <= 89:
+              # 좌하
+              if self.pieces[(bef_x - 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x - 1) + bef_y * 9)] == 0:
+                if ((bef_x - 2) + (bef_y + 1) * 9) <= 89:
+                  if self.pieces[(bef_x - 2) + (bef_y + 1) * 9] and self.enemy_pieces[89 - ((bef_x - 2) + (bef_y + 1) * 9)] == 0:
+                    actions.append(self.position_to_action(p, direction))
+
+            if ((bef_x - 1) + bef_y * 9) <= 89:
+              # 좌상
+              if self.pieces[(bef_x - 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x - 1) + bef_y * 9)] == 0:
+                if ((bef_x - 2) + (bef_y - 1) * 9) <= 89:
+                  if self.pieces[(bef_x - 2) + (bef_y - 1) * 9] and self.enemy_pieces[89 - ((bef_x - 2) + (bef_y - 1) * 9)] == 0:
+                    actions.append(self.position_to_action(p, direction))
+
+            if (bef_x + (bef_y - 1) * 9) <= 89:
+              # 상좌
+              if self.pieces[bef_x + (bef_y - 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y - 1) * 9)] == 0:
+                if ((bef_x - 1) + (bef_y - 2) * 9) <= 89:
+                  if self.pieces[(bef_x - 1) + (bef_y - 2) * 9] and self.enemy_pieces[89 - ((bef_x - 1) + (bef_y - 2) * 9)] == 0:
+                    actions.append(self.position_to_action(p, direction))
 
           # 왕
           elif self.pieces[position_src] == 7:
