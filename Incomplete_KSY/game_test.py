@@ -251,9 +251,8 @@ class State:
 
           # 차
           if self.pieces[position_src] == 1:
-            # x축의 경우
-            if self.dxy[direction][0] != 0 and self.dxy[direction][1] == 0:
-              # 우 
+            # 우
+            if self.dxy[direction][0] > 0 and self.dxy[direction][1] == 0:
               for path in range(1, self.dxy[direction][0]):
                 if self.enemy_pieces[89 - ((bef_x + path) + bef_y * 9)] != 0: # 상대편 보드에 기물이 있다면 행동추가 하고 break 
                   actions.append(self.position_to_action(p, direction))
@@ -262,7 +261,8 @@ class State:
                   break
                 else:
                   actions.append(self.position_to_action(p, direction)) # 둘다 아닐 경우 행동추가
-              # 좌
+            # 좌
+            if self.dxy[direction][0] < 0 and self.dxy[direction][1] == 0:
               for n_path in range(-1, self.dxy[direction][0], -1):
                 if self.enemy_pieces[89 - ((bef_x + n_path) + bef_y * 9)] != 0:
                   actions.append(self.position_to_action(p, direction))
@@ -271,9 +271,8 @@ class State:
                   break
                 else:
                   actions.append(self.position_to_action(p, direction))
-            # y축의 경우
-            if self.dxy[direction][1] != 0 and self.dxy[direction][0] == 0: 
-              # 하
+            # 하
+            if self.dxy[direction][1] > 0 and self.dxy[direction][0] == 0: 
               for path in range(1, self.dxy[direction][1]):
                 if self.enemy_pieces[89 - (bef_x + (bef_y+ path) * 9)] != 0:
                   actions.append(self.position_to_action(p, direction))
@@ -282,7 +281,8 @@ class State:
                   break
                 else:
                   actions.append(self.position_to_action(p, direction))
-              # 상
+            # 상
+            if self.dxy[direction][1] < 0 and self.dxy[direction][0] == 0: 
               for n_path in range(-1, self.dxy[direction][0], -1):
                 if self.enemy_pieces[89 - (bef_x + (bef_y+ path) * 9)] != 0:
                   actions.append(self.position_to_action(p, direction))
@@ -313,34 +313,34 @@ class State:
           # 졸
           elif self.pieces[position_src] == 2:
             actions.append(self.position_to_action(p, direction))
-          # 궁성안에 기물이 있을 때 대각선 행동 추가
-          if self.dxy[direction][1] != 0 and self.dxy[direction][0] != 0:
-            if position_src == 23:
-              if (self.dxy[direction][1] == -1 and self.dxy[direction][0] == -1):
-                actions.append(self.position_to_action(p, direction))
-            if position_src == 21:
-              if (self.dxy[direction][1] == 1 and self.dxy[direction][0] == -1):
-                actions.append(self.position_to_action(p, direction))
-            if position_src == 66 or position_src == 3:
-              if (self.dxy[direction][1] == 1 and self.dxy[direction][0] == 1) or (self.dxy[direction][1] == 2 and self.dxy[direction][0] == 2):
-                actions.append(self.position_to_action(p, direction))
-            if position_src == 13:
-              if (self.dxy[direction][1] == 1 and self.dxy[direction][0] == -1) or (self.dxy[direction][1] == -1 and self.dxy[direction][0] == -1):
-                actions.append(self.position_to_action(p, direction))
+            # 궁성안에 기물이 있을 때 대각선 행동 추가
+            if self.dxy[direction][1] != 0 and self.dxy[direction][0] != 0:
+              if position_src == 23:
+                if (self.dxy[direction][1] == -1 and self.dxy[direction][0] == -1):
+                  actions.append(self.position_to_action(p, direction))
+              if position_src == 21:
+                if (self.dxy[direction][1] == 1 and self.dxy[direction][0] == -1):
+                  actions.append(self.position_to_action(p, direction))
+              if position_src == 66 or position_src == 3:
+                if (self.dxy[direction][1] == 1 and self.dxy[direction][0] == 1) or (self.dxy[direction][1] == 2 and self.dxy[direction][0] == 2):
+                  actions.append(self.position_to_action(p, direction))
+              if position_src == 13:
+                if (self.dxy[direction][1] == 1 and self.dxy[direction][0] == -1) or (self.dxy[direction][1] == -1 and self.dxy[direction][0] == -1):
+                  actions.append(self.position_to_action(p, direction))
           
           # 마
           elif self.pieces[position_src] == 3:
             # 상
-            if self.pieces[bef_x + (bef_y - 1) * 9] and self.enemy_pieces[89 - bef_x + (bef_y - 1) * 9] == 0:
+            if self.pieces[bef_x + (bef_y - 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y - 1) * 9)] == 0:
               actions.append(self.position_to_action(p, direction))
             # 우
-            if self.pieces[(bef_x + 1) + bef_y * 9] and self.enemy_pieces[89 - (bef_x + 1) + bef_y * 9] == 0:
+            if self.pieces[(bef_x + 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x + 1) + bef_y * 9)] == 0:
               actions.append(self.position_to_action(p, direction)) 
             # 하         
-            if self.pieces[bef_x + (bef_y + 1) * 9] and self.enemy_pieces[89 - bef_x + (bef_y + 1) * 9] == 0:
+            if self.pieces[bef_x + (bef_y + 1) * 9] and self.enemy_pieces[89 - (bef_x + (bef_y + 1) * 9)] == 0:
               actions.append(self.position_to_action(p, direction))
             # 좌
-            if self.pieces[(bef_x - 1) + bef_y * 9] and self.enemy_pieces[89 - (bef_x - 1) + bef_y * 9] == 0:
+            if self.pieces[(bef_x - 1) + bef_y * 9] and self.enemy_pieces[89 - ((bef_x - 1) + bef_y * 9)] == 0:
               actions.append(self.position_to_action(p, direction))
 
           # 포
