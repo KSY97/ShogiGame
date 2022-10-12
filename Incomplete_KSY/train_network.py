@@ -23,19 +23,17 @@ def train_network():
   model.load_state_dict(torch.load(PATH))
 
   cudnn.benchmark = True
-  celoss = nn.CrossEntropyLoss()
-  mseloss = nn.MSELoss()
   optimizer = optim.Adam(model.parameters(), weight_decay=0.0002)
 
   for _ in range(RN_EPOCHS):
     torch.cuda.empty_cache()
-    train(model)
+    train(model, optimizer)
 
   torch.save(model.state_dict(), PATH)
 
   del model
 
-def train(model):
+def train(model, optimizer):
   device = 'cuda'
   model = model.to(device)
   model = torch.nn.DataParallel(model)
@@ -59,6 +57,8 @@ def train(model):
     p, v = model(xs)
 
   model.train()
+  celoss = nn.CrossEntropyLoss()
+  mseloss = nn.MSELoss()
   loss1 = celoss(p, y_policies)
   loss2 = mseloss(v, y_values)
   
