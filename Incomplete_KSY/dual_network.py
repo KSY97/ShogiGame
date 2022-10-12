@@ -13,8 +13,8 @@ import pickle
 
 # 파라미터 준비
 DN_FILTERS = 128  # 컨볼루션 레이어 커널 수(오리지널 256）
-DN_RESIDUAL_NUM = 16  # 레지듀얼 블록 수(오리지널 19)
-DN_INPUT_SHAPE = (15, 10, 9)  # 입력 셰이프
+# DN_RESIDUAL_NUM = 16  # 레지듀얼 블록 수(오리지널 19)
+DN_INPUT_SHAPE = (14, 10, 9)  # 입력 셰이프
 DN_OUTPUT_SIZE = 5220  # 행동 수(말의 이동 도착 위치(90) * 말의 이동 시작 위치(58))
 PATH = './model/best.h5'
 
@@ -32,7 +32,7 @@ class BasicBlock(nn.Module):
                          padding=1, bias=False)
 
     def forward(self, x):
-        out = F.relu(self.bn1(self.conv1(x)))
+        out = torch.relu(self.bn1(self.conv1(x)))
         out = self.bn2(self.conv2(out))
         out += x
         # print(out.shape)
@@ -44,7 +44,7 @@ class ResNet(nn.Module):
     self.in_planes = DN_FILTERS
 
     # 64개의 3x3 필터(filter)를 사용
-    self.conv1 = nn.Conv2d(15, DN_FILTERS, kernel_size=3, stride=1, padding=1, bias=False)
+    self.conv1 = nn.Conv2d(14, DN_FILTERS, kernel_size=3, stride=1, padding=1, bias=False)
     self.bn1 = nn.BatchNorm2d(DN_FILTERS)
     print()
     self.layer1 = self._make_layer(block, DN_FILTERS, num_blocks[0], stride=1)
@@ -64,7 +64,7 @@ class ResNet(nn.Module):
 
   def forward(self, x):
     # print('x = ', x.shape)
-    out = F.relu(self.bn1(self.conv1(x)))
+    out = torch.relu(self.bn1(self.conv1(x)))
     # print('out0 = ', out.shape)
     out = self.layer1(out)
     # print('out1 = ', out.shape)
@@ -82,8 +82,8 @@ class ResNet(nn.Module):
     v = self.linear_v(out)
     # print('p1 = ', p.shape)
     # print('v1 = ', v.shape)
-    p = F.softmax(p)
-    v = F.tanh(v)
+    # p = F.softmax(p)
+    v = torch.tanh(v)
     # print('p2 = ', p.shape)
     # print('v2 = ', v.shape)
     return p, v

@@ -6,12 +6,14 @@ import torch.optim as optim
 import os
 import numpy as np
 
+from dual_network import DN_INPUT_SHAPE
+
 from pathlib import Path
 from dual_network import ResNet18, PATH
 import pickle
 
 # 파라미터 준비
-RN_EPOCHS = 5 # 100  # 학습 횟수
+RN_EPOCHS = 100  # 학습 횟수
 
 def load_data():
   history_path = sorted(Path('./data').glob('*.history'))[-1]
@@ -40,9 +42,17 @@ def train(model, optimizer):
 
   history = load_data()
   xs, y_policies, y_values = zip(*history)
-  xs = torch.tensor(xs)
-  y_policies = torch.tensor(y_policies)
-  y_values = torch.tensor(y_values)
+  xs = np.array(xs, dtype=np.float32)
+  y_values =np.array(y_values, dtype = np.float32)
+  # print(xs.shape)
+  # print(len(xs))
+  a, b, c = DN_INPUT_SHAPE
+
+  xs = xs.reshape(len(xs), a, b, c)
+  # print(xs.shape)
+  xs = torch.tensor(xs, requires_grad=True)
+  y_policies = torch.tensor(y_policies, requires_grad=True)
+  y_values = torch.tensor(y_values, requires_grad=True)
 
   xs = xs.to(device)
   y_policies = y_policies.to(device)
@@ -56,13 +66,19 @@ def train(model, optimizer):
   with torch.no_grad():
     p, v = model(xs)
 
+  v = v.reshape(len(v))
+  # print(y_policies.shape)
+  # v = v.reshape(len(v))
+  # print(v.shape)
+  # print(y_values.shape)
+
   model.train()
   celoss = nn.CrossEntropyLoss()
   mseloss = nn.MSELoss()
   loss1 = celoss(p, y_policies)
   loss2 = mseloss(v, y_values)
   
-  loss1.backward(retain_graph=True )
+  loss1.backward(retain_graph=True)
   loss2.backward()
 
   optimizer.step()

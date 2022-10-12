@@ -7,6 +7,9 @@ from math import sqrt
 from pathlib import Path
 import numpy as np
 
+import torch
+from dual_network import ResNet18
+
 # 파라미터 준비
 PV_EVALUATE_COUNT = 50  # 추론 1회당 시뮬레이션 횟수(오리지널: 1600회)
 
@@ -14,27 +17,35 @@ PV_EVALUATE_COUNT = 50  # 추론 1회당 시뮬레이션 횟수(오리지널: 16
 def predict(model, state):
     # 추론을 위한 입력 데이터 셰이프 변환
     a, b, c = DN_INPUT_SHAPE
-    x = np.array(state.pieces_array())
-    x = x.reshape(c, a, b).transpose(1, 2, 0).reshape(1, a, b, c)
+    x = np.array([state.pieces_array()], dtype=np.float32)
+    # print('x.shape = ', x.shape)
+    # print(type(x))
+    x = x.reshape(len(x), a, b, c)
+    x = torch.tensor(x)
 
     # 추론
-    y = model.predict(x, batch_size=1)
+    model.eval()
+    y, value = model(x)
+    y = y.detach()
+    value = value.detach()
+
     # print('y.shape = ', y.shape)
     # print('y = ', y)
     # print('y[0] = ', y[0])
+    # print('y[0][list(state.legal_actions())] = ', y[0][list(state.legal_actions())])
     # print('y[1] = ', y[1])
     # print('y[0][0] = ', y[0][0])
     # print('y[0][0][0] = ', y[0][0][0])
 
     # 정책 얻기
     # print('둘 수 있는 수 = ', state.legal_actions())
-    policies = y[0][0][list(state.legal_actions())]  # 둘 수 있는 수만
+    policies = y[0][list(state.legal_actions())]  # 둘 수 있는 수만
     # print('policies1(y[0][0][list(state.legal_actions())]) = ', policies)
     policies /= sum(policies) if sum(policies) else 1  # 합계 1의 확률분포로 변환
     # print('policies2 = ', policies)
 
     # 가치 얻기
-    value = y[1][0][0]
+    # value = y[1][0][0]
     # print('value = ', value)
     # print('===========')
     return policies, value
@@ -142,7 +153,9 @@ def boltzman(xs, temperature):
 if __name__ == '__main__':
     # 모델 로드
     path = sorted(Path('./model').glob('*.h5'))[-1]
-    model = load_model(str(path))
+    model = ResNet18()
+    model.load_state_dict(torch.load(str(path)))
+    # model = load_model(str(path))
 
     # 상태 생성
     state = State()
@@ -163,4 +176,4 @@ if __name__ == '__main__':
         state = state.next(action)
 
         # 문자열 출력
-        print(state)
+        # print(state)

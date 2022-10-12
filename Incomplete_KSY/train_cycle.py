@@ -6,6 +6,10 @@ from self_play import self_play
 from train_network import train_network
 from evaluate_network import evaluate_network
 
+import warnings
+
+warnings.filterwarnings(action='ignore')
+
 # 듀얼 네트워크 생성
 dual_network()
 
