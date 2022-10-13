@@ -65,9 +65,9 @@ class State:
                             0,0,0,0,0,0,0,0,0,
                             0,0,0,0,0,0,0,0,0,
                             0,0,0,0,0,0,0,0,0,
-                            0,0,0,0,0,0,0,0,0,
-                            2,0,2,0,2,0,2,0,2,
-                            0,4,0,0,0,0,0,4,0,
+                            0,4,0,0,0,0,0,0,0,
+                            0,2,2,0,2,0,2,0,2,
+                            0,0,0,0,0,0,0,4,0,
                             0,0,0,0,7,0,0,0,0,
                             1,a,b,5,0,5,c,d,1]
 
@@ -526,7 +526,7 @@ class State:
           # 포
           elif self.pieces[position_src] == 4:
             # 이동 후의 위치에 적의 포가 없을 때 실행
-            if self.enemy_pieces[p] != 4: 
+            if self.enemy_pieces[89 - p] != 4: 
               # 우
               if self.dxy[direction][0] > 0 and self.dxy[direction][1] == 0:
                 is_po = False
@@ -597,7 +597,7 @@ class State:
                         actions.append(self.position_to_action(p, direction)) # 둘다 아닐 경우 행동추가
                 
               # 하
-              if self.dxy[direction][0] == 0 and self.dxy[direction][1] > 0:    
+              if self.dxy[direction][0] == 0 and self.dxy[direction][1] > 0:  
                 is_po = False 
                 for path in range(1, self.dxy[direction][1] +1):
                   if self.pieces[bef_x + (bef_y + path) * 9] != 0 or self.enemy_pieces[89 - (bef_x + (bef_y + path) * 9)] != 0: # 경로 중 뛰어 넘어 갈 기물이 있다면
@@ -726,7 +726,7 @@ class State:
       return result
 
 
-# state = State()
+state = State()
 
 # a = state.pieces_array()
 
@@ -737,7 +737,7 @@ class State:
 # print(state.legal_actions())
 # print('len = ', len(state.legal_actions()))
 
-# for i in state.legal_actions():
-#   print('{} // 58 = {}'.format(i, i // 58))
-#   print('{} % 58 = {}'.format(i, i % 58))
-#   print('-----')
+for i in state.legal_actions():
+  print('{} // 58 = {}'.format(i, i // 58))
+  print('{} % 58 = {}'.format(i, i % 58))
+  print('-----')

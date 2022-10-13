@@ -193,16 +193,16 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
             self.on_draw() # 그림을 그려준다.
 
             # # AI의 턴
-            # self.master.after(1, self.turn_of_ai)
+            self.master.after(1, self.turn_of_ai)
             # self.master.after(1, self.turn_of_human())
 
     def turn_of_ai(self):
-        if self.state.is_done(): # 게임 종료시 초기상태로 돌린다.
-            return
-        # 행동얻기
-        action = self.next_action(self.state)
-        # 다음 상태 얻기
-        self.state = self.state.next(action)
+        # if self.state.is_done(): # 게임 종료시 초기상태로 돌린다.
+        #     return
+        # # 행동얻기
+        action = self.state.legal_actions()
+        # # 다음 상태 얻기
+        self.state = self.state.next(action[0])
         self.on_draw()
     
 
