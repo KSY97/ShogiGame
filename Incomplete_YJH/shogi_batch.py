@@ -170,7 +170,7 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
 
         # 말 선택 (처음 돌을 클릭한 좌표 인덱스값이 들어간다.)
         if self.select < 0: # 처음에는 -1이므로 여기에 걸림
-            self.select = select # 누른곳의 좌표가 self.select에 들어간다.
+            self.select = select # 누른곳의 좌표가 self.select에 들어간다. 현재위치값이 들어감
             self.on_draw() # on_draw를 실행
             return
         
@@ -193,16 +193,16 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
             self.on_draw() # 그림을 그려준다.
 
             # # AI의 턴
-            self.master.after(1, self.turn_of_ai)
+            # self.master.after(1, self.turn_of_ai)
             # self.master.after(1, self.turn_of_human())
 
     def turn_of_ai(self):
-        # if self.state.is_done(): # 게임 종료시 초기상태로 돌린다.
-        #     return
-        # # 행동얻기
-        action = self.state.legal_actions()
-        # # 다음 상태 얻기
-        self.state = self.state.next(action[0])
+        if self.state.is_done(): # 게임 종료시 초기상태로 돌린다.
+            return
+        # 행동얻기
+        action = self.next_action(self.state)
+        # 다음 상태 얻기
+        self.state = self.state.next(action)
         self.on_draw()
     
 
@@ -265,7 +265,8 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
                 self.draw_piece(p,not self.state.is_first_player(),self.state.enemy_pieces[p1])
 
         if 0 <= self.select < 90:
-            self.draw_cursor(int(self.select % 9) * 100 + 2, int(self.select / 9) * 70 + 2, 56)
+            self.draw_cursor(int(self.select % 9) * 100 + 2, int(self.select / 9) * 70 + 2, self.select)
+            
 
     def draw_piece(self, index, first_player,piece_type): # index: 매스번호, first_player:선수여부
         x = (index % 9) * 100 + 30 # + 30은 여분만큼 더해줘야 하기에
@@ -275,8 +276,14 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
     
     # 커서 그리기
     # 인 수 x,y는 캔버스의 xy좌표 , "size"는 커서의 폭과 높이로 픽셀 단위를 지정한다.
-    def draw_cursor(self,x,y,size):
+    def draw_cursor(self,x,y,index):
         self.c.create_rectangle(x, y, x+56, y+56, width=4.0,outline= "red") # 외각 사각형
+        for action in self.state.legal_actions(index):
+             dst,direc = self.state.action_to_position(action) # dst = 도착 위치 인덱스 direction: 방향 
+             legal_x, legal_y = int(dst % 9) * 100 + 30, int(dst / 9) * 70 + 30
+             self.c.create_oval(legal_x,legal_y,legal_x,legal_y,width=6.0,outline = "red",fill="red")
+
+
     
     def create_index_dict(self):
         dict_index = {}
