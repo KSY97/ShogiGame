@@ -239,12 +239,17 @@ class State:
         return (int(action / 58), action % 58)
 
     # 가능한 행동 함수
-    def legal_actions(self):
+    def legal_actions(self, index = None):
       actions = []
-      for p in range(90):
-        if self.pieces[p] != 0:
-          actions.extend(self.legal_actions_pos(p))
-      return actions 
+      if index == None:
+        for p in range(90):
+          if self.pieces[p] != 0:
+            actions.extend(self.legal_actions_pos(p))
+        return actions 
+      else:
+        p = index
+        actions.extend(self.legal_actions_pos(p))
+        return actions 
 
     # 각 기물들의 모든 이동가능한 방향 함수
     def legal_actions_pos(self, position_src):
@@ -726,7 +731,7 @@ class State:
       return result
 
 
-state = State()
+# state = State()
 
 # a = state.pieces_array()
 
@@ -737,7 +742,7 @@ state = State()
 # print(state.legal_actions())
 # print('len = ', len(state.legal_actions()))
 
-for i in state.legal_actions():
-  print('{} // 58 = {}'.format(i, i // 58))
-  print('{} % 58 = {}'.format(i, i % 58))
-  print('-----')
+# for i in state.legal_actions():
+#   print('{} // 58 = {}'.format(i, i // 58))
+#   print('{} % 58 = {}'.format(i, i % 58))
+#   print('-----')
