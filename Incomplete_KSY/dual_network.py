@@ -92,6 +92,10 @@ def ResNet18():
   return ResNet(BasicBlock, [2, 2, 2, 2])
 
 def dual_network():
+  # 모델 생성이 완료된 경우 처리하지 않음
+  if os.path.exists('./model/best.h5'):
+    return
+  
   model = ResNet18()
   os.makedirs('./model/', exist_ok=True)  # 폴더가 없는 경우 생성
   torch.save(model.state_dict(), PATH)
