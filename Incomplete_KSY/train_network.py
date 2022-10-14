@@ -31,7 +31,7 @@ def train_network():
     torch.cuda.empty_cache()
     train(model, optimizer)
 
-  torch.save(model.state_dict(), PATH)
+  torch.save(model.state_dict(), './model/latest.h5')
 
   del model
 

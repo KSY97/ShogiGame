@@ -64,7 +64,14 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
         
         #캔버스 생성
         self.c = tk.Canvas(self, width=860,height=690,highlightthickness = 0)
+
         self.c.bind("<Button-1>",self.turn_of_human) # 클릭 판정 추가
+        # self.turn_of_ai()
+
+        # if
+            # self.c.bind("<Button-1>",self.turn_of_human) # 클릭 판정 추가
+        # else:
+            # turn_of_ai()
         self.c.pack()
 
         # 그림 갱신
@@ -152,9 +159,9 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
             self.on_draw() ## 화면을 초기화 한다.
             return
 
-        # 선 수가 아닌 경우
-        if not self.state.is_first_player():
-            return # 아무것도 안한다.
+        # # 선 수가 아닌 경우
+        # if not self.state.is_first_player():
+        #     return # 아무것도 안한다.
 
         # 말 선택과 이동 위치 계산 (x좌표, y좌표)
         # print('event.x, event.y = ', event.x, event.y)
@@ -209,6 +216,7 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
         # 다음 상태 얻기
         self.state = self.state.next(action)
         self.on_draw()
+        # self.master.after(1, self.c.bind("<Button-1>",self.turn_of_human))
     
 
 
