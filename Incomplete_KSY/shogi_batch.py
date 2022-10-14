@@ -11,7 +11,10 @@ from venv import create
 from PIL import Image, ImageTk
 from game import State 
 from pathlib import Path
-# from pv_mcts import pv_mcts_action
+from pv_mcts import pv_mcts_action
+
+from dual_network import ResNet18
+import torch
 
 
 class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣는다.
@@ -21,13 +24,13 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
         tk.Frame.__init__(self,master)
         # 타이틀 표시
         self.master.title("shogi_AI")
-        print("idx = ",idx)
+        # print("idx = ",idx)
         
 
         # 게임 상태 생성
         self.state = State()
         self.select = -1 # 선택(-1: 없음, 0~89 매스)
-
+        
         self.dict_index = self.create_index_dict()
 
         
@@ -41,7 +44,9 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
                     [1, -1], [2, -2], [1, 1], [2, 2], [-1, 1], [-2, 2], [-1, -1], [-2, -2]]          # 50-57 궁성안의 대각선 움직임          # 42-49  상
         
         # PV MCTS를 활용한 행동 선택을 따르는 함수 생성
-        # self.next_action = pv_mcts_action(model, 0.0)
+        model = ResNet18()
+        model.load_state_dict(torch.load('./model/best.h5', map_location=torch.device('cpu')))
+        self.next_action = pv_mcts_action(model, 0.0)
 
         # 이미지 로드
         self.cho_images = []
@@ -152,14 +157,14 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
             return # 아무것도 안한다.
 
         # 말 선택과 이동 위치 계산 (x좌표, y좌표)
-        print('event.x, event.y = ', event.x, event.y)
+        # print('event.x, event.y = ', event.x, event.y)
         # p = int((event.x -30) / 100) + int((event.y - 30) / 70 ) * 9 # 첫번째는 시작위치 인덱스 값 # 두 번째 클릭시 도착위치의 좌표
         # print('p = int(({} -30) / 100) + int(( - 30) / 70 ) * 9'.format(event.x, event.y))
         # print('p = {} + {}'.format(int((event.x -30) / 100), int((event.y - 30) / 70 )))
         # print('p = ', p)
         
         p = self.coord_to_index(event.x, event.y) # 첫번째는 시작위치 인덱스 값 # 두 번째 클릭시 도착위치의 좌표
-        print('p = ', p)
+        # print('p = ', p)
         
         if (0 <= event.x <= 860) and (0 <= event.y <=690): # 장기판의 범위 안에 있으면
             if p is not None:
@@ -197,12 +202,12 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
             # self.master.after(1, self.turn_of_human())
 
     def turn_of_ai(self):
-        # if self.state.is_done(): # 게임 종료시 초기상태로 돌린다.
-        #     return
-        # # 행동얻기
-        action = self.state.legal_actions()
-        # # 다음 상태 얻기
-        self.state = self.state.next(action[0])
+        if self.state.is_done(): # 게임 종료시 초기상태로 돌린다.
+            return
+        # 행동얻기
+        action = self.next_action(self.state)
+        # 다음 상태 얻기
+        self.state = self.state.next(action)
         self.on_draw()
     
 
@@ -265,7 +270,7 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
                 self.draw_piece(p,not self.state.is_first_player(),self.state.enemy_pieces[p1])
 
         if 0 <= self.select < 90:
-            self.draw_cursor(int(self.select % 9) * 100 + 2, int(self.select / 9) * 70 + 2, 56)
+            self.draw_cursor(int(self.select % 9) * 100 + 2, int(self.select / 9) * 70 + 2, self.select)
 
     def draw_piece(self, index, first_player,piece_type): # index: 매스번호, first_player:선수여부
         x = (index % 9) * 100 + 30 # + 30은 여분만큼 더해줘야 하기에
@@ -275,8 +280,12 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
     
     # 커서 그리기
     # 인 수 x,y는 캔버스의 xy좌표 , "size"는 커서의 폭과 높이로 픽셀 단위를 지정한다.
-    def draw_cursor(self,x,y,size):
+    def draw_cursor(self,x,y,index):
         self.c.create_rectangle(x, y, x+56, y+56, width=4.0,outline= "red") # 외각 사각형
+        for action in self.state.legal_actions(index):
+             dst,direc = self.state.action_to_position(action) # dst = 도착 위치 인덱스 direction: 방향 
+             legal_x, legal_y = int(dst % 9) * 100 + 30, int(dst / 9) * 70 + 30
+             self.c.create_oval(legal_x,legal_y,legal_x,legal_y,width=6.0,outline = "red",fill="red")
     
     def create_index_dict(self):
         dict_index = {}
