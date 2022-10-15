@@ -25,10 +25,12 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
         # 타이틀 표시
         self.master.title("shogi_AI")
         print("idx = ",idx)
-        
+
+        # 선 수 후 수 판별을 위해
+        self.idx = idx # idx[0] == 0 내가 선, idx[0] == 1 내가 후 
 
         # 게임 상태 생성
-        self.state = State()
+        self.state = State(idx = self.idx)
         self.select = -1 # 선택(-1: 없음, 0~89 매스)
         
         self.dict_index = self.create_index_dict()
@@ -48,31 +50,58 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
         model.load_state_dict(torch.load('./model/best.h5', map_location=torch.device('cpu')))
         self.next_action = pv_mcts_action(model, 0.0)
 
+        # # 이미지 로드
+        # self.cho_images = []
+        # self.han_images = []
+        # self.images = [(None,None,None,None)]
+        # for i in range(1,8):
+        #     image_cho = Image.open("cho_piece{}.png".format(i)) # 선 돌(내 돌) 
+        #     image_han = Image.open("han_piece{}.png".format(i)) # 후 돌(적 돌)
+        #     self.images.append((
+        #         ImageTk.PhotoImage(image_cho),
+        #         ImageTk.PhotoImage(image_han.rotate(180)),
+        #         ImageTk.PhotoImage(image_cho), # 추 후 resize 예정
+        #         ImageTk.PhotoImage(image_han)  # 추 후 resize 예정
+        #     ))
+
+        # 추가
         # 이미지 로드
-        self.cho_images = []
-        self.han_images = []
+        self.win_lose_images = [] # 승 패 이미지
         self.images = [(None,None,None,None)]
         for i in range(1,8):
             image_cho = Image.open("cho_piece{}.png".format(i)) # 선 돌(내 돌) 
             image_han = Image.open("han_piece{}.png".format(i)) # 후 돌(적 돌)
             self.images.append((
                 ImageTk.PhotoImage(image_cho),
-                ImageTk.PhotoImage(image_han.rotate(180)),
-                ImageTk.PhotoImage(image_cho), # 추 후 resize 예정
-                ImageTk.PhotoImage(image_han)  # 추 후 resize 예정
+                ImageTk.PhotoImage(image_han),
+                ImageTk.PhotoImage(image_cho.rotate(180)), # 추 후 resize 예정
+                ImageTk.PhotoImage(image_han.rotate(180))  # 추 후 resize 예정
             ))
+        self.win_lose_images.append(ImageTk.PhotoImage(Image.open("win.png")))
+        self.win_lose_images.append(ImageTk.PhotoImage(Image.open("lose.png")))
         
         #캔버스 생성
         self.c = tk.Canvas(self, width=860,height=690,highlightthickness = 0)
+        
 
-        self.c.bind("<Button-1>",self.turn_of_human) # 클릭 판정 추가
+        # self.c.bind("<Button-1>",self.turn_of_human) # 클릭 판정 추가
         # self.turn_of_ai()
 
-        # if
-            # self.c.bind("<Button-1>",self.turn_of_human) # 클릭 판정 추가
-        # else:
-            # turn_of_ai()
+        if self.idx[0] == 0:  # 선수선택
+            self.c.bind("<Button-1>",self.turn_of_human) # 클릭 판정 추가
+        else:  # 후수선택
+            self.turn_of_ai()
         self.c.pack()
+
+        # # 추가
+        # # 그림 갱신
+        # if self.state.is_done():
+        #     if self.state.is_lose() == True:
+        #         self.on_draw(win_lose = 0) # 내 돌 승리시
+        #     else:
+        #         self.on_draw(win_lose = 1) # 내 돌 패배시
+        # else:
+        #     self.on_draw()  # 끝나지 않았을때는 그냥 그린다.
 
         # 그림 갱신
         self.on_draw() 
@@ -151,6 +180,13 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
     # 7.  말 선택과 이동 위치로부터 변환한 행동이 둘 수 있는 수가 아닌 경우 말 선택을 해제한다.
     # 8. 둘 수 있는 수인 경우 다음상태를 취득하고,화면을 갱신한다.
     # 9. AI의 턴으로 바꾼다.
+
+    # 추가
+    def who_is_first(self):
+        if self.idx[0] == 0: # 내가 선공이면
+            return True
+        if self.idx[0] == 1: # 내가 후공이면
+            return False
     
     # 클릭시 호출
     def turn_of_human(self, event):
@@ -204,7 +240,13 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
 
             self.state = self.state.next(action) # 다음 상태를 얻은 후
             self.select = -1 # 초기화 해주고
-            self.on_draw() # 그림을 그려준다.
+            
+            # self.on_draw() # 그림을 그려준다.
+
+            if self.state.is_done():
+                self.on_draw(win_lose = 0)
+            else:
+                self.on_draw()
 
             # # AI의 턴
             self.master.after(1, self.turn_of_ai)
@@ -217,8 +259,14 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
         action = self.next_action(self.state)
         # 다음 상태 얻기
         self.state = self.state.next(action)
-        self.on_draw()
-        # self.master.after(1, self.c.bind("<Button-1>",self.turn_of_human))
+
+        if self.state.is_done():
+            self.on_draw(win_lose = 1)
+        else:
+            self.on_draw()
+
+            if self.idx[0] == 1:
+                self.master.after(1, self.c.bind("<Button-1>",self.turn_of_human))
     
 
 
@@ -236,7 +284,7 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
 
 
 
-    def on_draw(self): # 그림 갱신 
+    def on_draw(self, win_lose = None): # 그림 갱신 
         # 매스 기본 프레임
         self.c.delete('all')
         self.c.create_rectangle(0, 0, 860, 690, width=0.0, fill='#EDAA56') # 외각 사각형
@@ -271,22 +319,75 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
         self.c.create_oval(730,520,730,520,width=6.0,fill="#000000")
         self.c.create_oval(830,450,830,450,width=6.0,fill="#000000")
 
+        #추가
         # 돌 그리기
-        for p in range(90): # 좌표 위치 인덱스를 p에 넣어준다.
-            p0, p1 = (p, 89-p) if self.state.is_first_player() else (89-p, p) ## (89-p,p)는 상대편에서의 장기판은 뒤집혀야 되야 한다.
-            if self.state.pieces[p0] != 0: # 해당 인덱스에 돌이 있다면 (내 돌 기준)
-                self.draw_piece(p,self.state.is_first_player(),self.state.pieces[p0])
-            if self.state.enemy_pieces[p1] != 0: # 해당 인덱스에 돌이 있다면 (적 돌 기준) rotate 적용
-                self.draw_piece(p,not self.state.is_first_player(),self.state.enemy_pieces[p1])
+        for p in range(90): # 좌표 위치 인덱스를 p에 넣어준다. (p0가 무조건 내꺼)
 
+            if self.idx[0] == 0:
+                if self.state.is_first_player():
+                    p0,p1 = (p,89-p)   # p0는 내 돌 배치, p1는 상대 돌 배치
+                    who0, who1 = 0, 1
+                else:
+                    p0,p1 = (89-p,p)
+                    who0, who1 = 1, 0
+            else:
+                if self.state.is_first_player():
+                    p0,p1 = (89-p,p)   # p0는 내 돌 배치, p1는 상대 돌 배치
+                    who0, who1 = 1, 0
+                else:
+                    p0,p1 = (p,89-p)
+                    who0, who1 = 0, 1
+            # p0,p1 = (p,89-p)
+            
+            if self.state.pieces[p0] != 0: # 해당 인덱스에 돌이 있다면 (내 돌 기준)
+                self.draw_piece(p,self.who_is_first(),self.state.pieces[p0],who0)
+            if self.state.enemy_pieces[p1] != 0: # 해당 인덱스에 돌이 있다면 (적 돌 기준)
+                self.draw_piece(p,self.who_is_first(),self.state.enemy_pieces[p1],who1)
+
+            # p0, p1 = (p, 89-p) if self.state.is_first_player() else (89-p, p) ## (89-p,p)는 상대편에서의 장기판은 뒤집혀야 되야 한다.
+            # if self.state.pieces[p0] != 0: # 해당 인덱스에 돌이 있다면 (내 돌 기준)
+            #     self.draw_piece(p,self.state.is_first_player(),self.state.pieces[p0])
+            # if self.state.enemy_pieces[p1] != 0: # 해당 인덱스에 돌이 있다면 (적 돌 기준) rotate 적용
+            #     self.draw_piece(p,not self.state.is_first_player(),self.state.enemy_pieces[p1])
+
+        # 커서 그리기
         if 0 <= self.select < 90:
             self.draw_cursor(int(self.select % 9) * 100 + 2, int(self.select / 9) * 70 + 2, self.select)
 
-    def draw_piece(self, index, first_player,piece_type): # index: 매스번호, first_player:선수여부
+        # 승리 화면, 패배 화면 그리기
+        if win_lose == 0: # 승리시
+            self.c.create_image(430,345,image = self.win_lose_images[0])
+        if win_lose == 1: # 패배시
+            self.c.create_image(430,345,image = self.win_lose_images[1])
+        
+
+
+    def draw_piece(self, index, first_player,piece_type,who): # index: 매스번호, first_player:선수여부
+        # x = (index % 9) * 100 + 30 # + 30은 여분만큼 더해줘야 하기에
+        # y = int(index / 9) * 70  + 30
+        # index = 0 if first_player else 1
+        # self.c.create_image(x,y, image = self.images[piece_type][index])       
+         
         x = (index % 9) * 100 + 30 # + 30은 여분만큼 더해줘야 하기에
         y = int(index / 9) * 70  + 30
-        index = 0 if first_player else 1
-        self.c.create_image(x,y, image = self.images[piece_type][index])        
+        if first_player: # 내가 선일때 나:0 상대: 3 
+            my_batch = 0
+            enemy_batch = 3
+
+        else: # 상대가 선일때 나:1 상대: 2
+            my_batch = 1
+            enemy_batch = 2
+        
+        if who == 0:
+            self.c.create_image(x,y, image = self.images[piece_type][my_batch]) 
+        if who == 1:
+            self.c.create_image(x,y, image = self.images[piece_type][enemy_batch])
+
+    # def draw_piece(self, index, first_player,piece_type): # index: 매스번호, first_player:선수여부
+    #     x = (index % 9) * 100 + 30 # + 30은 여분만큼 더해줘야 하기에
+    #     y = int(index / 9) * 70  + 30
+    #     index = 0 if first_player else 1
+    #     self.c.create_image(x,y, image = self.images[piece_type][index])        
     
     # 커서 그리기
     # 인 수 x,y는 캔버스의 xy좌표 , "size"는 커서의 폭과 높이로 픽셀 단위를 지정한다.

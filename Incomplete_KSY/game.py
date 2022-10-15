@@ -40,25 +40,29 @@ class State:
         if pieces == None or enemy_pieces == None:
             if self.idx == None: # 인덱스 설정을 하지 않는 기본값
               a, b, c, d = 3, 6, 3, 6 # 마상마상
-            elif self.idx[0] == 0:
+            else:
               a, b, c, d = 3, 6, 3, 6 # 마상마상
-            elif self.idx[0] == 1:
-              a, b, c, d = 3, 6, 6, 3 # 마상상마
-            elif self.idx[0] == 2:
-              a, b, c, d = 6, 3, 6, 3 # 상마상마
-            elif self.idx[0] == 3:
-              a, b, c, d = 6, 3, 3, 6 # 상마마상
+            # elif self.idx[0] == 0:
+            #   a, b, c, d = 3, 6, 3, 6 # 마상마상
+            # elif self.idx[0] == 1:
+            #   a, b, c, d = 3, 6, 6, 3 # 마상상마
+            # elif self.idx[0] == 2:
+            #   a, b, c, d = 6, 3, 6, 3 # 상마상마
+            # elif self.idx[0] == 3:
+            #   a, b, c, d = 6, 3, 3, 6 # 상마마상
             
             if self.idx == None: # 인덱스 설정을 하지 않는 기본값
               e, f, g, h = 3, 6, 3, 6 # 마상마상
-            elif self.idx[1] == 0:
+            else:
               e, f, g, h = 3, 6, 3, 6 # 마상마상
-            elif self.idx[1] == 1:
-              e, f, g, h = 3, 6, 6, 3 # 마상상마
-            elif self.idx[1] == 2:
-              e, f, g, h = 6, 3, 6, 3 # 상마상마
-            elif self.idx[1] == 3:
-              e, f, g, h = 6, 3, 3, 6 # 상마마상
+            # elif self.idx[1] == 0:
+            #   e, f, g, h = 3, 6, 3, 6 # 마상마상
+            # elif self.idx[1] == 1:
+            #   e, f, g, h = 3, 6, 6, 3 # 마상상마
+            # elif self.idx[1] == 2:
+            #   e, f, g, h = 6, 3, 6, 3 # 상마상마
+            # elif self.idx[1] == 3:
+            #   e, f, g, h = 6, 3, 3, 6 # 상마마상
                           
             self.pieces =  [0,0,0,0,0,0,0,0,0,
                             0,0,0,0,0,0,0,0,0,

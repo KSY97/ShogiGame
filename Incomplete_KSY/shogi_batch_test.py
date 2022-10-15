@@ -11,8 +11,10 @@ from venv import create
 from PIL import Image, ImageTk
 from game import State 
 from pathlib import Path
-# from pv_mcts import pv_mcts_action
-# import pygame
+from pv_mcts import pv_mcts_action
+
+from dual_network import ResNet18
+import torch
 
 class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣는다.
     # __init__ 부분에서는 게임 상태와 PV MCTS로 행동 선택을 수행하는 함수와
@@ -43,7 +45,9 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
                     [1, -1], [2, -2], [1, 1], [2, 2], [-1, 1], [-2, 2], [-1, -1], [-2, -2]]          # 50-57 궁성안의 대각선 움직임          # 42-49  상
         
         # PV MCTS를 활용한 행동 선택을 따르는 함수 생성
-        # self.next_action = pv_mcts_action(model, 0.0)
+        model = ResNet18()
+        model.load_state_dict(torch.load('./model/best.h5', map_location=torch.device('cpu')))
+        self.next_action = pv_mcts_action(model, 0.0)
 
         # 이미지 로드
         # self.cho_images = []
@@ -64,7 +68,11 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
         
         #캔버스 생성
         self.c = tk.Canvas(self, width=860,height=690,highlightthickness = 0)
+
+
         self.c.bind("<Button-1>",self.turn_of_human) # 클릭 판정 추가
+
+        
         self.c.pack()
 
         # 그림 갱신
