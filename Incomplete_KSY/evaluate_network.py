@@ -11,7 +11,7 @@ import torch
 from dual_network import ResNet18
 
 # 파라미터 준비
-EN_GAME_COUNT = 10  # 평가 1회 당 게임 수(오리지널: 400)
+EN_GAME_COUNT = 100  # 평가 1회 당 게임 수(오리지널: 400) # 기존 10에서 점수가 비교적 동등하게 나와 100으로 변경
 EN_TEMPERATURE = 1.0  # 볼츠만 분포 온도
 
 # 선 수를 둔 플레이어의 포인트
@@ -49,6 +49,7 @@ def update_best_player():
 
 # 네트워크 평가
 def evaluate_network():
+    # map_location=torch.device('cpu') # 노트북에서 쓸때만 path뒤에 붙여주기
     # 최신 플레이어 모델 로드
     model0 = ResNet18()
     model0.load_state_dict(torch.load('./model/latest.h5'))
@@ -70,8 +71,10 @@ def evaluate_network():
         # 1 게임 실행
         if i % 2 == 0:
             total_point += play(next_actions)
+            print(total_point)
         else:
             total_point += 1 - play(list(reversed(next_actions)))
+            print(total_point)
 
         # 출력
         print('\rEvaluate {}/{}'.format(i + 1, EN_GAME_COUNT), end='')

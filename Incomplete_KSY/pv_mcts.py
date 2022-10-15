@@ -11,7 +11,7 @@ import torch
 from dual_network import ResNet18
 
 # 파라미터 준비
-PV_EVALUATE_COUNT = 50  # 추론 1회당 시뮬레이션 횟수(오리지널: 1600회)
+PV_EVALUATE_COUNT = 100  # 추론 1회당 시뮬레이션 횟수(오리지널: 1600회) # 기존 50회에서 100회로 변경
 
 # 추론
 def predict(model, state):

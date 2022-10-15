@@ -24,7 +24,7 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
         tk.Frame.__init__(self,master)
         # 타이틀 표시
         self.master.title("shogi_AI")
-        # print("idx = ",idx)
+        print("idx = ",idx)
         
 
         # 게임 상태 생성
@@ -84,58 +84,60 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
 
         # # 초 돌 (1:초차,2:초졸,3:초마,4:초포,5:초사,6:초상,7:초왕)
         # self.cho_images.append(0) # API와 idx 번호를 일치시키기 위해
-        # self.cho_images.append(ImageTk.PhotoImage(Image.open("chocha.png")))
-        # self.cho_images.append(ImageTk.PhotoImage(Image.open("chojol.png")))
-        # self.cho_images.append(ImageTk.PhotoImage(Image.open("choma.png")))
-        # self.cho_images.append(ImageTk.PhotoImage(Image.open("chopo.png")))
-        # self.cho_images.append(ImageTk.PhotoImage(Image.open("chosa.png")))
-        # self.cho_images.append(ImageTk.PhotoImage(Image.open("chosang.png")))
-        # self.cho_images.append(ImageTk.PhotoImage(Image.open("chowang.png"))) 
+        # self.cho_images.append(ImageTk.PhotoImage(Image.open("cho_piece1.png")))
+        # self.cho_images.append(ImageTk.PhotoImage(Image.open("cho_piece2.png")))
+        # self.cho_images.append(ImageTk.PhotoImage(Image.open("cho_piece3.png")))
+        # self.cho_images.append(ImageTk.PhotoImage(Image.open("cho_piece4.png")))
+        # self.cho_images.append(ImageTk.PhotoImage(Image.open("cho_piece5.png")))
+        # self.cho_images.append(ImageTk.PhotoImage(Image.open("cho_piece6.png")))
+        # self.cho_images.append(ImageTk.PhotoImage(Image.open("cho_piece7.png")))
         
 
         # # 한 돌 (1:한차,2:한졸,3:한마,4:한포,5:한사,6:한상,7:한왕)
         # self.han_images.append(0) # API와 idx 번호를 일치시키기 위해
-        # self.han_images.append(ImageTk.PhotoImage(Image.open("hancha.png")))
-        # self.han_images.append(ImageTk.PhotoImage(Image.open("hanjol.png")))
-        # self.han_images.append(ImageTk.PhotoImage(Image.open("hanma.png")))
-        # self.han_images.append(ImageTk.PhotoImage(Image.open("hanpo.png")))
-        # self.han_images.append(ImageTk.PhotoImage(Image.open("hansa.png")))
-        # self.han_images.append(ImageTk.PhotoImage(Image.open("hansang.png")))
-        # self.han_images.append(ImageTk.PhotoImage(Image.open("hanwang.png")))
+        # self.han_images.append(ImageTk.PhotoImage(Image.open("han_piece1.png")))
+        # self.han_images.append(ImageTk.PhotoImage(Image.open("han_piece2.png")))
+        # self.han_images.append(ImageTk.PhotoImage(Image.open("han_piece3.png")))
+        # self.han_images.append(ImageTk.PhotoImage(Image.open("han_piece4.png")))
+        # self.han_images.append(ImageTk.PhotoImage(Image.open("han_piece5.png")))
+        # self.han_images.append(ImageTk.PhotoImage(Image.open("han_piece6.png")))
+        # self.han_images.append(ImageTk.PhotoImage(Image.open("han_piece7.png")))
 
 
         
-        
-        # 내가 선일때 말 배치
-         # 3:초마,6:초상
+        # self.my_batch()
+        # self.enemy_batch()
+
+        # # 내가 선일때 말 배치
+        # #  3:초마,6:초상
         # if self.idx[1] == 0:
         #     self.a,self.b,self.d,self.e = 3,6,3,6 # 마상마상
-        #     # self.my_batch()
+        #     self.my_batch()
         # if self.idx[1] == 1:
         #     self.a,self.b,self.d,self.e = 3,6,6,3 # 마상상마
-        #     # self.my_batch()
+        #     self.my_batch()
         # if self.idx[1] == 2:
         #     self.a,self.b,self.d,self.e = 6,3,6,3 # 상마상마
-        #     # self.my_batch()
+        #     self.my_batch()
         # if self.idx[1] == 3:
         #     self.a,self.b,self.d,self.e = 6,3,3,6 # 상마마상
-        #     # self.my_batch()
+        #     self.my_batch()
 
 
         # # 내가 후 일때 말 배치
         # # 3:초마,6:초상
         # if self.idx[1] == 0:
         #     self.a,self.b,self.d,self.e = 3,6,3,6 # 마상마상
-        #     # self.enemy_batch()
+        #     self.enemy_batch()
         # if self.idx[1] == 1:
         #     self.a,self.b,self.d,self.e = 3,6,6,3 # 마상상마
-        #     # self.enemy_batch()
+        #     self.enemy_batch()
         # if self.idx[1] == 2:
         #     self.a,self.b,self.d,self.e = 6,3,6,3 # 상마상마
-        #     # self.enemy_batch()
+        #     self.enemy_batch()
         # if self.idx[1] == 3:
         #     self.a,self.b,self.d,self.e = 6,3,3,6 # 상마마상
-            # self.enemy_batch()
+        #     self.enemy_batch()
     
     # def turn_of_human에 대한 설명글
     # 1. 게임이 종료되는 경우 게임을 초기상태로 돌린다
@@ -319,7 +321,7 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
             
         
     
-    # 한 돌 (1:한차,2:한졸,3:한마,4:한포,5:한사,6:한상,7:한왕)
+    # # 한 돌 (1:한차,2:한졸,3:한마,4:한포,5:한사,6:한상,7:한왕)
     # def enemy_batch(self):
     #     if self.idx[0] == 0:
     #         images = self.han_images
@@ -327,12 +329,12 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
     #         images = self.cho_images
         
     #     self.c.create_image(30,30,image=images[1]) # 한 차
-    #     self.c.create_image(130,30,image=images[self.e]) # 한 마
-    #     self.c.create_image(230,30,image=images[self.d]) # 한 상
+    #     self.c.create_image(130,30,image=images[3]) # 한 마
+    #     self.c.create_image(230,30,image=images[6]) # 한 상
     #     self.c.create_image(330,30,image=images[5]) # 한 사
     #     self.c.create_image(530,30,image=images[5]) # 한 사
-    #     self.c.create_image(630,30,image=images[self.b])# 한 상
-    #     self.c.create_image(730,30,image=images[self.a])# 한 마
+    #     self.c.create_image(630,30,image=images[3])# 한 상
+    #     self.c.create_image(730,30,image=images[6])# 한 마
     #     self.c.create_image(830,30,image=images[1])# 한 차
     #     self.c.create_image(430,100,image=images[7]) # 한 왕
     #     self.c.create_image(130,170,image=images[4]) # 한 포
@@ -354,12 +356,12 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
     #         images = self.han_images
 
     #     self.c.create_image(30,660,image=images[1]) # 초 차
-    #     self.c.create_image(130,660,image=images[self.a]) # 초 마
-    #     self.c.create_image(230,660,image=images[self.b]) # 초 상
+    #     self.c.create_image(130,660,image=images[3]) # 초 마
+    #     self.c.create_image(230,660,image=images[6]) # 초 상
     #     self.c.create_image(330,660,image=images[5]) # 초 사
     #     self.c.create_image(530,660,image=images[5]) # 초 사
-    #     self.c.create_image(630,660,image=images[self.d]) # 초 마
-    #     self.c.create_image(730,660,image=images[self.e]) # 초 상
+    #     self.c.create_image(630,660,image=images[3]) # 초 마
+    #     self.c.create_image(730,660,image=images[6]) # 초 상
     #     self.c.create_image(830,660,image=images[1]) # 초 차
     #     self.c.create_image(430,590,image=images[7]) # 초 왕
     #     self.c.create_image(130,520,image=images[4]) # 초 포
