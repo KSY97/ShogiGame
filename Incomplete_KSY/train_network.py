@@ -12,8 +12,12 @@ from pathlib import Path
 from dual_network import ResNet18, PATH
 import pickle
 
+from torch.utils.data import TensorDataset
+from torch.utils.data import DataLoader
+
 # 파라미터 준비
-RN_EPOCHS = 100  # 학습 횟수
+RN_EPOCHS = 10  # 학습 횟수
+BATCH_SIZE = 128
 
 def load_data():
   history_path = sorted(Path('./data').glob('*.history'))[-1]
@@ -27,9 +31,10 @@ def train_network():
   cudnn.benchmark = True
   optimizer = optim.Adam(model.parameters(), weight_decay=0.0002)
 
-  for _ in range(RN_EPOCHS):
+  for i in range(RN_EPOCHS):
     torch.cuda.empty_cache()
     train(model, optimizer)
+    print('Epochs : ', i+1)
 
   torch.save(model.state_dict(), './model/latest.h5')
 
@@ -54,38 +59,41 @@ def train(model, optimizer):
   y_policies = torch.tensor(y_policies, requires_grad=True)
   y_values = torch.tensor(y_values, requires_grad=True)
 
-  xs = xs.to(device)
-  y_policies = y_policies.to(device)
-  y_values = y_values.to(device)
+  dataset = TensorDataset(xs, y_policies, y_values)
+  dataloader = DataLoader(dataset, batch_size= BATCH_SIZE, shuffle=True)
+  # print(len(dataloader))
 
-  # print(xs, y_policies, y_values)
-  # print(xs.shape)
+  for batch_idx, samples in enumerate(dataloader):
+    print("\r- batch_idx : {}/{}".format(batch_idx + 1, len(dataloader)), end='')
 
-  optimizer.zero_grad()
-  model.eval()
-  with torch.no_grad():
-    p, v = model(xs)
+    xs, y_policies, y_values = samples
 
-  v = v.reshape(len(v))
-  # print(y_policies.shape)
-  # v = v.reshape(len(v))
-  # print(v.shape)
-  # print(y_values.shape)
+    # print(xs)
+    # print(torch.max(y_policies))
+    # print(y_values)
 
-  model.train()
-  celoss = nn.CrossEntropyLoss()
-  mseloss = nn.MSELoss()
-  loss1 = celoss(p, y_policies)
-  loss2 = mseloss(v, y_values)
-  
-  loss1.backward(retain_graph=True)
-  loss2.backward()
+    xs = xs.to(device)
+    y_policies = y_policies.to(device)
+    y_values = y_values.to(device)
 
-  optimizer.step()
+    optimizer.zero_grad()
+    model.eval()
+    with torch.no_grad():
+      p, v = model(xs)
+
+    v = v.reshape(len(v))
+
+    model.train()
+    celoss = nn.CrossEntropyLoss()
+    mseloss = nn.MSELoss()
+    loss1 = celoss(p, y_policies)
+    loss2 = mseloss(v, y_values)
+    
+    loss1.backward(retain_graph=True)
+    loss2.backward()
+
+    optimizer.step()
 
 # 동작 확인
 if __name__ == '__main__':
     train_network()
-
-
-

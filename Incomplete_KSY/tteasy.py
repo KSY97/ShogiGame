@@ -1,5 +1,6 @@
 import tkinter as tk 
 from shogi_batch import GameUI
+# from shogi_batch_ai import GameUI
 from PIL import Image, ImageTk
 
 # tteasy 동작 방식
