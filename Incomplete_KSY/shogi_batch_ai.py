@@ -12,11 +12,16 @@ from PIL import Image, ImageTk
 from game import State 
 from pathlib import Path
 from pv_mcts import pv_mcts_action
+import numpy as np
 
 from dual_network import ResNet18
 import torch
 
 TEMPERTURE = 1.0 # 볼츠만 온도 상수
+# TEMPERTURE = [0.0, 1.0] # 볼츠만 온도 상수
+# P = [0.7, 0.3]
+
+# temperture = np.random.choice(TEMPERTURE, p=P)
 
 
 class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣는다.

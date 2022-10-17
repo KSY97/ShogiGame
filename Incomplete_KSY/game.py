@@ -657,7 +657,62 @@ class State:
           # 사
           elif self.pieces[position_src] == 5:
             if 3 <= x and x <= 5 and 7 <= y and y <= 9: # 이동후의 위치가 궁성을 벗어나지 않는 다면
-              actions.append(self.position_to_action(p, direction))
+
+              if direction in diag:
+                if position_src == 66 or position_src == 3:
+                  if self.enemy_pieces[89 - ((bef_x + 1) + (bef_y + 1) * 9)] != 0:
+                    if direction == 52:
+                      actions.append(self.position_to_action(p, direction))
+
+                  elif self.pieces[(bef_x + 1) + (bef_y + 1) * 9] == 0:
+                    if direction == 52:
+                      actions.append(self.position_to_action(p, direction))
+
+                elif position_src == 68 or position_src == 5:
+                  if self.enemy_pieces[89 - ((bef_x - 1) + (bef_y + 1) * 9)] != 0:
+                    if direction == 54:
+                      actions.append(self.position_to_action(p, direction))
+            
+                  elif self.pieces[(bef_x - 1) + (bef_y + 1) * 9] == 0:
+                    if direction == 54:
+                      actions.append(self.position_to_action(p, direction))
+
+
+                elif position_src == 84 or position_src == 21:
+                  if self.enemy_pieces[89 - ((bef_x + 1) + (bef_y - 1) * 9)] != 0:
+                    if direction == 50:
+                      actions.append(self.position_to_action(p, direction))
+    
+                  elif self.pieces[(bef_x + 1) + (bef_y - 1) * 9] == 0:
+                    if direction == 50:
+                      actions.append(self.position_to_action(p, direction))
+
+
+                elif position_src == 86 or position_src == 23:
+                  if self.enemy_pieces[89 - ((bef_x - 1) + (bef_y - 1) * 9)] != 0:
+                    if direction == 56:
+                      actions.append(self.position_to_action(p, direction))
+
+                  elif self.pieces[(bef_x - 1) + (bef_y - 1) * 9] == 0:
+                    if direction == 56:
+                      actions.append(self.position_to_action(p, direction))
+    
+
+                elif position_src == 76 or position_src == 13:
+                  if direction == 50:
+                    if self.pieces[(bef_x + 1) + (bef_y - 1) * 9] == 0 or self.enemypieces[89 - ((bef_x + 1) + (bef_y - 1) * 9)] != 0:
+                      actions.append(self.position_to_action(p, direction))
+                  if direction == 52:
+                    if self.pieces[(bef_x + 1) + (bef_y + 1) * 9] == 0 or self.enemypieces[89 - ((bef_x + 1) + (bef_y + 1) * 9)] != 0:
+                      actions.append(self.position_to_action(p, direction))
+                  if direction == 54:
+                    if self.pieces[(bef_x - 1) + (bef_y + 1) * 9] == 0 or self.enemypieces[89 - ((bef_x - 1) + (bef_y + 1) * 9)] != 0:
+                      actions.append(self.position_to_action(p, direction))
+                  if direction == 56:
+                    if self.pieces[(bef_x - 1) + (bef_y - 1) * 9] == 0 or self.enemypieces[89 - ((bef_x - 1) + (bef_y - 1) * 9)] != 0:
+                      actions.append(self.position_to_action(p, direction))
+              else:
+                actions.append(self.position_to_action(p, direction))
                 
           # 상 
           elif self.pieces[position_src] == 6:
@@ -725,7 +780,61 @@ class State:
           # 왕
           elif self.pieces[position_src] == 7:
             if 3 <= x and x <= 5 and 7 <= y and y <= 9: # 이동후의 위치가 궁성을 벗어나지 않는 다면
-              actions.append(self.position_to_action(p, direction))
+              if direction in diag:
+                if position_src == 66 or position_src == 3:
+                  if self.enemy_pieces[89 - ((bef_x + 1) + (bef_y + 1) * 9)] != 0:
+                    if direction == 52:
+                      actions.append(self.position_to_action(p, direction))
+
+                  elif self.pieces[(bef_x + 1) + (bef_y + 1) * 9] == 0:
+                    if direction == 52:
+                      actions.append(self.position_to_action(p, direction))
+
+                elif position_src == 68 or position_src == 5:
+                  if self.enemy_pieces[89 - ((bef_x - 1) + (bef_y + 1) * 9)] != 0:
+                    if direction == 54:
+                      actions.append(self.position_to_action(p, direction))
+            
+                  elif self.pieces[(bef_x - 1) + (bef_y + 1) * 9] == 0:
+                    if direction == 54:
+                      actions.append(self.position_to_action(p, direction))
+
+
+                elif position_src == 84 or position_src == 21:
+                  if self.enemy_pieces[89 - ((bef_x + 1) + (bef_y - 1) * 9)] != 0:
+                    if direction == 50:
+                      actions.append(self.position_to_action(p, direction))
+    
+                  elif self.pieces[(bef_x + 1) + (bef_y - 1) * 9] == 0:
+                    if direction == 50:
+                      actions.append(self.position_to_action(p, direction))
+
+
+                elif position_src == 86 or position_src == 23:
+                  if self.enemy_pieces[89 - ((bef_x - 1) + (bef_y - 1) * 9)] != 0:
+                    if direction == 56:
+                      actions.append(self.position_to_action(p, direction))
+
+                  elif self.pieces[(bef_x - 1) + (bef_y - 1) * 9] == 0:
+                    if direction == 56:
+                      actions.append(self.position_to_action(p, direction))
+    
+
+                elif position_src == 76 or position_src == 13:
+                  if direction == 50:
+                    if self.pieces[(bef_x + 1) + (bef_y - 1) * 9] == 0 or self.enemypieces[89 - ((bef_x + 1) + (bef_y - 1) * 9)] != 0:
+                      actions.append(self.position_to_action(p, direction))
+                  if direction == 52:
+                    if self.pieces[(bef_x + 1) + (bef_y + 1) * 9] == 0 or self.enemypieces[89 - ((bef_x + 1) + (bef_y + 1) * 9)] != 0:
+                      actions.append(self.position_to_action(p, direction))
+                  if direction == 54:
+                    if self.pieces[(bef_x - 1) + (bef_y + 1) * 9] == 0 or self.enemypieces[89 - ((bef_x - 1) + (bef_y + 1) * 9)] != 0:
+                      actions.append(self.position_to_action(p, direction))
+                  if direction == 56:
+                    if self.pieces[(bef_x - 1) + (bef_y - 1) * 9] == 0 or self.enemypieces[89 - ((bef_x - 1) + (bef_y - 1) * 9)] != 0:
+                      actions.append(self.position_to_action(p, direction))
+              else:
+                actions.append(self.position_to_action(p, direction))
 
         for i in actions:
           if i not in result:
