@@ -119,7 +119,9 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
         # 게임 종료 시
         if self.state.is_done():
             self.state = State() ## 돌 값을 초기화 해준다.
-            self.on_draw() ## 화면을 초기화 한다.
+            self.on_draw() ## 화면을 초기화 한다
+            if self.idx[0] == 1:
+                self.turn_of_ai()
             return
         
         p = self.coord_to_index(event.x, event.y) # 첫번째는 시작위치 인덱스 값 # 두 번째 클릭시 도착위치의 좌표
@@ -162,6 +164,7 @@ class GameUI(tk.Frame): # 클래스는 보통 부모클래스가 뭔지를 넣�
             self.master.after(1, self.turn_of_ai)
 
     def turn_of_ai(self):
+        # print(self.idx[0])
         if self.state.is_done(): # 게임 종료시 초기상태로 돌린다.
             return
         # 행동얻기
