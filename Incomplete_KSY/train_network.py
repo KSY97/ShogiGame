@@ -16,7 +16,7 @@ from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
 
 # 파라미터 준비
-RN_EPOCHS = 10  # 학습 횟수
+RN_EPOCHS = 100  # 학습 횟수
 BATCH_SIZE = 128
 
 def load_data():
@@ -26,7 +26,7 @@ def load_data():
 
 def train_network():
   model = ResNet18()
-  model.load_state_dict(torch.load(PATH))
+  model.load_state_dict(torch.load('./model/latest.h5'))
 
   cudnn.benchmark = True
   optimizer = optim.Adam(model.parameters(), weight_decay=0.0002)
