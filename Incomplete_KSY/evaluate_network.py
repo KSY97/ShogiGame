@@ -11,7 +11,7 @@ import torch
 from dual_network import ResNet18
 
 # 파라미터 준비
-EN_GAME_COUNT = 100  # 평가 1회 당 게임 수(오리지널: 400) # 기존 10에서 점수가 비교적 동등하게 나와 100으로 변경
+EN_GAME_COUNT = 20  # 평가 1회 당 게임 수(오리지널: 400) # 기존 10에서 점수가 비교적 동등하게 나와 100으로 변경
 EN_TEMPERATURE = 1.0  # 볼츠만 분포 온도
 
 # 선 수를 둔 플레이어의 포인트
@@ -52,12 +52,12 @@ def evaluate_network():
     # map_location=torch.device('cpu') # 노트북에서 쓸때만 path뒤에 붙여주기
     # 최신 플레이어 모델 로드
     model0 = ResNet18()
-    model0.load_state_dict(torch.load('./model/latest.h5'))
+    model0.load_state_dict(torch.load('./model/latest.h5', map_location=torch.device('cpu')))
     # model0 = load_model('./model/latest.h5')
 
     # 베스트 플레이어 모델 로드
     model1 = ResNet18()
-    model1.load_state_dict(torch.load('./model/best.h5'))
+    model1.load_state_dict(torch.load('./model/best.h5', map_location=torch.device('cpu')))
     # model1 = load_model('./model/best.h5')
 
     # PV MCTS를 활용해 행동 선택을 수행하는 함수 생성
