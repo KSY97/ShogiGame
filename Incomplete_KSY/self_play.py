@@ -16,7 +16,7 @@ import torch
 from dual_network import PATH, ResNet18
 
 # 파라미터 준비
-SP_GAME_COUNT = 500 # 셀프 플레이를 수행할 게임 수(오리지널: 25,000) # 기존 200에서 500으로 변경 학습 데이터 양을 늘리기위해
+SP_GAME_COUNT = 100 # 셀프 플레이를 수행할 게임 수(오리지널: 25,000) # 기존 200에서 500으로 변경 학습 데이터 양을 늘리기위해
 SP_TEMPERATURE = 1.0  # 볼츠만 분포의 온도 파라미터
 
 # 선 수를 둔 플레이어 가치
@@ -77,7 +77,7 @@ def self_play():
 
     # 베스트 플레이어 모델 로드
     model = ResNet18()
-    model.load_state_dict(torch.load(PATH))
+    model.load_state_dict(torch.load(PATH, map_location=torch.device('cpu')))
     # model = load_model('./model/best.h5')
 
     # 여러 차례 게임 실행

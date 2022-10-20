@@ -11,7 +11,7 @@ import torch
 from dual_network import ResNet18
 
 # 파라미터 준비
-EN_GAME_COUNT = 20  # 평가 1회 당 게임 수(오리지널: 400) # 기존 10에서 점수가 비교적 동등하게 나와 100으로 변경
+EN_GAME_COUNT = 100  # 평가 1회 당 게임 수(오리지널: 400) # 기존 10에서 점수가 비교적 동등하게 나와 100으로 변경
 EN_TEMPERATURE = 1.0  # 볼츠만 분포 온도
 
 # 선 수를 둔 플레이어의 포인트

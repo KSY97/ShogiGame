@@ -845,9 +845,8 @@ class State:
 
 
 # state = State()
-
 # a = state.pieces_array()
-
+# print(a)
 # print(np.array(a).shape)
 
 # print(state.cal_piece_score())

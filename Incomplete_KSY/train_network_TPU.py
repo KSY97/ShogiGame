@@ -15,6 +15,7 @@ import pickle
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
+import torch_xla.core.xla_model as xm
 
 # 파라미터 준비
 RN_EPOCHS = 100  # 학습 횟수
@@ -40,7 +41,8 @@ def train_network():
   del model
 
 def train(model, optimizer):
-  device = 'cuda'
+  # device = 'cuda'
+  device = xm.xla_device()
   model = model.to(device)
   model = torch.nn.DataParallel(model)
 
