@@ -19,7 +19,7 @@ from torch.utils.data.sampler import SubsetRandomSampler
 # 파라미터 준비
 RN_EPOCHS = 100  # 학습 횟수
 BATCH_SIZE = 128
-patience_limit = 10
+patience_limit = 20
 
 def load_data():
   history_path = sorted(Path('./data').glob('*.history'))[-1]
@@ -47,6 +47,7 @@ def train(model, optimizer):
   history = load_data()
   xs, y_policies, y_values = zip(*history)
   xs = np.array(xs, dtype=np.float32)
+  y_policies =np.array(y_policies, dtype = np.float32)
   y_values =np.array(y_values, dtype = np.float32)
   # print(xs.shape)
   # print(len(xs))
@@ -54,25 +55,30 @@ def train(model, optimizer):
 
   xs = xs.reshape(len(xs), a, b, c)
   # print(xs.shape)
-  xs = torch.tensor(xs, requires_grad=True)
-  y_policies = torch.tensor(y_policies, requires_grad=True)
-  y_values = torch.tensor(y_values, requires_grad=True)
+  xs = torch.tensor(xs)
+  y_policies = torch.tensor(y_policies)
+  y_values = torch.tensor(y_values)
 
   valid_size = 0.2
   num_train = len(xs)
-
+  indices = list(range(num_train))
   split = int(np.floor(valid_size * num_train))
-  train_idx, valid_idx = xs[split:], xs[:split]
+  train_idx, valid_idx = indices[split:], indices[:split]
+  
+  # print('train_idx = ', train_idx)
+  # print('valid_idx = ', valid_idx)
 
   train_sampler = SubsetRandomSampler(train_idx)
   valid_sampler = SubsetRandomSampler(valid_idx)
 
   dataset = TensorDataset(xs, y_policies, y_values)
-  train_loader = DataLoader(dataset, batch_size= BATCH_SIZE ,sampler=train_sampler, shuffle=True)
-  val_loader = DataLoader(dataset, batch_size= BATCH_SIZE ,sampler=valid_sampler, shuffle=True)
+  train_loader = DataLoader(dataset, batch_size= BATCH_SIZE ,sampler=train_sampler)
+  val_loader = DataLoader(dataset, batch_size= BATCH_SIZE ,sampler=valid_sampler)
   # print(len(dataloader))
 
-  # dataloader = DataLoader(xs, batch_size= BATCH_SIZE, shuffle=True)
+  # dataloader = DataLoader(dataset, batch_size= BATCH_SIZE, shuffle=True)
+  best_loss1 = 10**5
+  best_loss2 = 10**5
 
   for i in range(RN_EPOCHS):
     torch.cuda.empty_cache()
@@ -81,20 +87,39 @@ def train(model, optimizer):
 
       xs, y_policies, y_values = samples
 
+      # print('xs = ', xs.dtype)
+      # print('torch.max(y_policies) = ', torch.max(y_policies))
+      # print('y_values = ', y_values)
+
+      xs = xs.clone().detach().requires_grad_(True)
+      y_policies = y_policies.clone().detach().requires_grad_(True)
+      y_values = y_values.clone().detach().requires_grad_(True)
+
       # print('xs = ', xs)
       # print('torch.max(y_policies) = ', torch.max(y_policies))
       # print('y_values = ', y_values)
 
-      xs = xs.to(device)
-      y_policies = y_policies.to(device)
-      y_values = y_values.to(device)
+      xs = xs.to(device=device)
+      y_policies = y_policies.to(device=device)
+      y_values = y_values.to(device=device)
 
       optimizer.zero_grad()
+      # model.train()
       model.eval()
       with torch.no_grad():
         p, v = model(xs)
 
       v = v.reshape(len(v))
+      # print(p.dtype)
+      # print(v.dtype)
+      # xs = xs.type(torch.LongTensor)
+      # y_policies = y_policies.long()
+      # y_values = y_values.type(torch.LongTensor)
+      # p = p.long()
+      # v = v.type(torch.LongTensor)
+
+      # print('y_policies = ',y_policies)
+      # print('p =', p)
 
       model.train()
       celoss = nn.CrossEntropyLoss()
