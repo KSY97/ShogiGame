@@ -52,12 +52,12 @@ def evaluate_network():
     # map_location=torch.device('cpu') # 노트북에서 쓸때만 path뒤에 붙여주기
     # 최신 플레이어 모델 로드
     model0 = ResNet18()
-    model0.load_state_dict(torch.load('./model/latest.h5', map_location=torch.device('cpu')))
+    model0.load_state_dict(torch.load('./model/latest.h5'))
     # model0 = load_model('./model/latest.h5')
 
     # 베스트 플레이어 모델 로드
     model1 = ResNet18()
-    model1.load_state_dict(torch.load('./model/best.h5', map_location=torch.device('cpu')))
+    model1.load_state_dict(torch.load('./model/best.h5'))
     # model1 = load_model('./model/best.h5')
 
     # PV MCTS를 활용해 행동 선택을 수행하는 함수 생성
@@ -71,13 +71,13 @@ def evaluate_network():
         # 1 게임 실행
         if i % 2 == 0:
             total_point += play(next_actions)
-            print(total_point)
+            # print(total_point)
         else:
             total_point += 1 - play(list(reversed(next_actions)))
-            print(total_point)
+            # print(total_point)
 
         # 출력
-        print('\rEvaluate {}/{}'.format(i + 1, EN_GAME_COUNT), end='')
+        print('\rEvaluate {}/{} Total_point {}'.format(i + 1, EN_GAME_COUNT, total_point), end='')
     print('')
 
     # 평균 포인트 계산

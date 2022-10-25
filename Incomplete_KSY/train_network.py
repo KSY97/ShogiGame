@@ -17,8 +17,8 @@ from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
 
 # 파라미터 준비
-RN_EPOCHS = 100  # 학습 횟수
-BATCH_SIZE = 128
+RN_EPOCHS = 1000  # 학습 횟수
+BATCH_SIZE = 512
 patience_limit = 20
 
 def load_data():
@@ -160,12 +160,18 @@ def train(model, optimizer):
       patience_check += 1
 
       if patience_check >= patience_limit: # early stopping 조건 만족 시 조기 종료
-          break
+        print('\nEarly Stop')
+        # model = ResNet18()
+        model.load_state_dict(torch.load('./model/temp.h5'))
+        break
 
     else: # loss가 개선된 경우
       best_loss1 = val_loss1
       best_loss2 = val_loss2
       patience_check = 0
+
+      torch.save(model.state_dict(), './model/temp.h5')
+
 
   
 
