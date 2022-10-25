@@ -77,7 +77,7 @@ def self_play():
 
     # 베스트 플레이어 모델 로드
     model = ResNet18()
-    model.load_state_dict(torch.load(PATH, map_location=torch.device('cpu')))
+    model.load_state_dict(torch.load(PATH))
     # model = load_model('./model/best.h5')
 
     # 여러 차례 게임 실행
